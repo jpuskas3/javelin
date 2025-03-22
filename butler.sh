@@ -7,7 +7,7 @@ date=$(date)
 
 echo "Butler: Hello $name!"
 echo "$age years old"
-echo "Boomboclat!!!"
+echo ""
 sleep 1
 echo "How we feeling today?!"
 echo ""
