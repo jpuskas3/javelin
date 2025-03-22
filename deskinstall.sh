@@ -44,14 +44,14 @@ echo "+"
 sleep 1
 
 echo "Checking/Editing .profile and for automated start lines..."
-# define the line to add to .profile
+# define the line to add to .bash_profile
 line_to_add='# Automatically open my app after login
 ~/Desktop/JAVELIN.sh'
-# Check if the line already exists in .profile
-if ! grep -Fxq "$line_to_add" ~/.profile; then
-  # If the line doesn't exist, append it to .profile
-  echo "$line_to_add" >> ~/.profile
-  echo "Line added to .profile."
+# Check if the line already exists in .bash_profile
+if ! grep -Fxq "$line_to_add" ~/.bash_profile; then
+  # If the line doesn't exist, append it to .bash_profile
+  echo "$line_to_add" >> ~/.bash_profile
+  echo "Line added to .bash_profile."
 else
   echo "Line already exists."
 fi
