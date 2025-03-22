@@ -1,0 +1,47 @@
+#!/bin/bash
+directory=$(pwd)
+
+echo "copying Desk folder to the desktop"
+sudo cp -r Desk ../Desktop
+echo "did it work?"
+read
+echo "entering Desk"
+cd
+cd Desktop/Desk
+
+echo "making gitcloning.sh executable"
+sudo chmod +x gitcloning.sh
+echo "$directory: are we in the right place before we continue?"
+read
+echo "copying the JAVELIN.sh start file to desktop"
+sudo cp JAVELIN.sh ../
+
+echo "making executable JAVELIN.sh located in 'home/$USER/Desktop'"
+cd ..
+sudo chmod +x JAVELIN.sh
+echo "is JAVELIN.sh on the desktop? I'm about to build the venv"
+echo "building local venv"
+cd
+cd
+python3 -m venv javenv
+source javenv/bin/activate
+pip install -r javelin/requirements.txt
+deactivate
+echo "javenv installation completed"
+read
+
+echo "entering javelin directory"
+cd
+cd javelin
+
+echo "making executable all javelin directory files"
+sudo chmod +x mom.sh butler.sh intro.sh asem
+echo "+"
+sleep 1
+sudo chmod +x app_gui.py app.py toolbar_gui.py models.py
+cd ..
+echo "+"
+sleep 1
+echo "if a file is moved, it maintains the owner's permissions, if it is copied new executable permissions must be re-established"
+echo "That's all. This should work"
+exit
