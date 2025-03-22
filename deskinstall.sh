@@ -43,27 +43,15 @@ cd ..
 echo "+"
 sleep 1
 
-echo "Checking/Editing .profile and .bashrc for automated start lines..."
+echo "Checking/Editing .profile and for automated start lines..."
 # define the line to add to .profile
-line_to_add='# include bashrc file
-[[ -f ~/.bashrc ]] && . ~/.bashrc'
+line_to_add='# Automatically open my app after login
+~/Desktop/JAVELIN.sh &'
 # Check if the line already exists in .profile
 if ! grep -Fxq "$line_to_add" ~/.profile; then
   # If the line doesn't exist, append it to .profile
   echo "$line_to_add" >> ~/.profile
   echo "Line added to .profile."
-else
-  echo "Line already exists."
-fi
-
-# define the line to add to .bashrc
-line_to_add='# Automatically open my app after login
-~/Desktop/JAVELIN.sh &'
-# Check if the line already exists in .bashrc
-if ! grep -Fxq "line_to_add" ~/.bashrc; then
-  # If the line doesn't exist, append it to .bashrc
-  echo "$line_to_add" >> ~/.bashrc
-  echo "Line added to .bashrc."
 else
   echo "Line already exists."
 fi
