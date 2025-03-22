@@ -42,6 +42,31 @@ sudo chmod +x app_gui.py app.py toolbar_gui.py models.py
 cd ..
 echo "+"
 sleep 1
+
+echo "Checking/Editing .bash_profile and .bashrc for automated start lines..."
+# define the line to add to .bash_profile
+line_to_add='[[ -f ~/.bashrc ]] && . ~/.bashrc'
+# Check if the line already exists in .bash_profile
+if ! grep -Fxq "$line_to_add" ~/.bash_profile; then
+  # If the line doesn't exist, append it to .bash_profile
+  echo "$line_to_add" >> ~/.bash_profile
+  echo "Line added to .bash_profile."
+else
+  echo "Line already exists."
+fi
+
+# define the line to add to .bashrc
+line_to_add='# Automatically open my app after login
+~/Desktop/JAVELIN.sh &'
+# Check if the line already exists in .bashrc
+if ! grep -Fxq "line_to_add" ~/.bashrc; then
+  # If the line doesn't exist, append it to .bashrc
+  echo "$line_to_add" >> ~/. bashrc
+  echo "Line added to .bashrc."
+else
+  echo "Line already exists."
+fi
+
 echo "if a file is moved, it maintains the owner's permissions, if it is copied new executable permissions must be re-established"
 echo "That's all. This should work"
 exit
