@@ -46,7 +46,7 @@ sleep 1
 echo "Checking/Editing .profile and for automated start lines..."
 # define the line to add to .profile
 line_to_add='# Automatically open my app after login
-~/Desktop/JAVELIN.sh &'
+~/Desktop/JAVELIN.sh'
 # Check if the line already exists in .profile
 if ! grep -Fxq "$line_to_add" ~/.profile; then
   # If the line doesn't exist, append it to .profile
