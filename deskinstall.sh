@@ -15,11 +15,22 @@ echo "$directory: are we in the right place before we continue?"
 read
 echo "copying the JAVELIN.sh start file to desktop"
 sudo cp JAVELIN.sh ../
-
+sudo cp JAVELIN.sh.desktop ../../.config/autostart
+echo "is JAVELIN.sh on the desktop?" 
+read
 echo "making executable JAVELIN.sh located in 'home/$USER/Desktop'"
 cd ..
 sudo chmod +x JAVELIN.sh
-echo "is JAVELIN.sh on the desktop? I'm about to build the venv"
+sleep 1
+echo "making executable JAVELIN.sh.desktop located in 'home/$USER/.config/autostart'"
+cd
+cd .config/autostart
+sudo chmod +x JAVELIN.sh.desktop
+sleep 1
+echo "Done with that. Ready to move on?"
+read
+
+echo "Now building the local venv called javenv"
 echo "building local venv"
 cd
 cd
