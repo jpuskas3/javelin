@@ -15,9 +15,16 @@ echo "$directory: are we in the right place before we continue?"
 read
 echo "copying the JAVELIN.sh start file to desktop"
 sudo cp JAVELIN.sh ../
-sudo cp JAVELIN.sh.desktop ../../.config/autostart
 echo "is JAVELIN.sh on the desktop?" 
 read
+echo "checking $Home/$USER/.config/autostart/ for JAVELIN.sh.desktop..."
+file_path="$Home/$USER/.config/autostart/JAVELIN.sh.desktop"
+
+if [[ -f "$file_path"  ]]; then
+  echo "It's already there"
+else
+  sudo cp JAVELIN.sh.desktop ../../.config/autostart
+fi
 echo "making executable JAVELIN.sh located in 'home/$USER/Desktop'"
 cd ..
 sudo chmod +x JAVELIN.sh
