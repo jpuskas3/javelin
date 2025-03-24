@@ -13,7 +13,7 @@ class MainWindow(QWidget):
 
 # Set the window to always stay at the bottom of the screen
         screen_rect = QDesktopWidget().availableGeometry()
-        self.setGeometry(0, 1500, screen_rect.width(), 100)
+        self.setGeometry(0, 750, screen_rect.width(), 100)
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
         
 # Set up the window
