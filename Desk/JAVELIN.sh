@@ -16,9 +16,7 @@ wmctrl -r "Konsole" -e 0,0,1000,990,300 &
 
 python3 app_gui.py &
 
-
-python3 --window-position=0,0 toolbar_gui.py &
-
+python3 toolbar_gui.py &
 
 chromium --window-size=600,450 --window-position=1010,0 templates/index.html
 
