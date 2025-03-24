@@ -11,15 +11,19 @@ class MainWindow(QWidget):
     def initUI(self):
         self.setWindowTitle("Toolbar GUI")
 
-        # Set the window to always stay at the bottom of the screen
+# Set the window to always stay at the bottom of the screen
         screen_rect = QDesktopWidget().availableGeometry()
-        self.setGeometry(0, screen_rect.height() - 100, screen_rect.width(), 100)
+        self.setGeometry(0, 38, screen_rect.width(), 100)
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
-
-        # Layout
+        
+# Set up the window
+#       self.setWindowTitle("Serving Tool")
+#       self.setGeometry(510, 38, 500, 380)
+        
+# Layout
         layout = QVBoxLayout()
 
-        # Buttons
+# Buttons
         self.serving_tool_button = QPushButton("Open Serving Tool", self)
         self.serving_tool_button.clicked.connect(self.open_serving_tool)
 
@@ -29,12 +33,12 @@ class MainWindow(QWidget):
         self.close_button = QPushButton("Close", self)
         self.close_button.clicked.connect(self.close_application)
 
-        # Add buttons to layout
+# Add buttons to layout
         layout.addWidget(self.serving_tool_button)
         layout.addWidget(self.web_scraper_button)
         layout.addWidget(self.close_button)
 
-        # Set layout
+# Set layout
         self.setLayout(layout)
 
     def open_serving_tool(self):
