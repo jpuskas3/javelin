@@ -17,29 +17,47 @@ echo "copying the JAVELIN.sh start file to desktop"
 sudo cp JAVELIN.sh ../
 echo "is JAVELIN.sh on the desktop?" 
 read
-echo "checking $Home/$USER/.config/autostart/ for JAVELIN.sh.desktop..."
-file_path="$Home/$USER/.config/autostart/JAVELIN.sh.desktop"
-
-if [[ -f "$file_path"  ]]; then
-  echo "It's already there"
-else
-  sudo cp JAVELIN.sh.desktop ../../.config/autostart
-fi
-echo "making executable JAVELIN.sh located in 'home/$USER/Desktop'"
 cd ..
+echo "making executable JAVELINsh located in 'home/$USER/Desktop'"
 sudo chmod +x JAVELIN.sh
-sleep 1
+
+# Navigate to the .config directory
+cd
+cd .config 
+
+# Check if the autostart directory exists
+if [ -d "autostart" ]; then
+    echo "Here's the directory"
+    file_path="$Home/$USER/.config/autostart/JAVELIN.sh.desktop"
+    if [[ file_path exists ]]; then
+      echo "It's already here"
+    else
+      cd
+      cd Desktop/Desk
+      cp JAVELIN.sh.desktop ../../.config/autostart
+    fi
+else
+    echo "Not here"
+    
+    # Search for an autostart file
+    autostart_file=$(find . -type f -name "autostart")
+    
+    if [ -n "$autostart_file" ]; then
+        echo "Here's the autostart file"
+    else
+        echo "Autostart file not here either. im in $pwd"
+    fi
+fi
+
 echo "making executable JAVELIN.sh.desktop located in 'home/$USER/.config/autostart'"
 cd
 cd .config/autostart
 sudo chmod +x JAVELIN.sh.desktop
-sleep 1
 echo "Done with that. Ready to move on?"
 read
 
 echo "Now building the local venv called javenv"
 echo "building local venv"
-cd
 cd
 python3 -m venv javenv
 source javenv/bin/activate
