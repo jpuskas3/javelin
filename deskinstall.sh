@@ -5,33 +5,34 @@ echo "copying Desk folder to the desktop"
 sudo cp -r Desk ../Desktop
 echo "did it work?"
 read
+
 echo "entering Desk"
 cd
 cd Desktop/Desk
-
 echo "making gitcloning.sh executable"
 sudo chmod +x gitcloning.sh
 echo "$directory: are we in the right place before we continue?"
 read
-echo "copying the JAVELIN.sh start file to desktop"
-sudo cp JAVELIN.sh ../
-echo "is JAVELIN.sh on the desktop?" 
+
+echo "copying the javelin_start.sh start file to desktop"
+sudo cp javelin_start.sh ../
+echo "is javelin_start.sh on the desktop?" 
 read
 
 cd ..
-echo "making executable JAVELINsh located in 'home/$USER/Desktop'"
-sudo chmod +x JAVELIN.sh
+echo "making executable javelin_start.sh located in 'home/$USER/Desktop'"
+sudo chmod +x javelin_start.sh
 
 # Navigate to the .config directory
 cd
 cd .config 
 
 # Check if the autostart directory exists
-if [ -d "autfile_path="$Home/$USER/.config/autostart/JAVELIN.sh.desktop"ostart" ]; then
+if [ -d file_path="$Home/$USER/.config/autostart" ]; then
     echo "Here's the directory"
     file_path="$HOME/$USER/.config/autostart/JAVELIN.sh.desktop"
     if [[ -e "$file_path" ]]; then
-      echo "It's already here"
+      echo "and here's the file"
     else
       cd
       cd Desktop/Desk
@@ -46,7 +47,7 @@ else
     if [ -n "$autostart_file" ]; then
         echo "Here's the autostart file"
     else
-        echo "Autostart file not here either. im in $pwd"
+        echo "Autostart file not here either"
     fi
 fi
 
@@ -72,7 +73,7 @@ cd
 cd javelin
 
 echo "making executable all javelin directory files"
-sudo chmod +x mom.sh butler.sh intro.sh asem
+sudo chmod +x mom.sh butler.sh intro.sh JAVELIN.sh asem
 echo "+"
 sleep 1
 sudo chmod +x app_gui.py app.py toolbar_gui.py models.py
@@ -83,7 +84,7 @@ sleep 1
 echo "Checking/Editing .profile and for automated start lines..."
 # define the line to add to .bash_profile
 line_to_add='# Automatically open my app after login
-~/Desktop/JAVELIN.sh'
+~/Desktop/javelin_start.sh'
 # Check if the line already exists in .bash_profile
 if ! grep -Fxq "$line_to_add" ~/.bash_profile; then
   # If the line doesn't exist, append it to .bash_profile
