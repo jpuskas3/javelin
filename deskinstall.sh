@@ -17,6 +17,7 @@ echo "copying the JAVELIN.sh start file to desktop"
 sudo cp JAVELIN.sh ../
 echo "is JAVELIN.sh on the desktop?" 
 read
+
 cd ..
 echo "making executable JAVELINsh located in 'home/$USER/Desktop'"
 sudo chmod +x JAVELIN.sh
@@ -26,10 +27,10 @@ cd
 cd .config 
 
 # Check if the autostart directory exists
-if [ -d "autostart" ]; then
+if [ -d "autfile_path="$Home/$USER/.config/autostart/JAVELIN.sh.desktop"ostart" ]; then
     echo "Here's the directory"
-    file_path="$Home/$USER/.config/autostart/JAVELIN.sh.desktop"
-    if [[ file_path exists ]]; then
+    file_path="$HOME/$USER/.config/autostart/JAVELIN.sh.desktop"
+    if [[ -e "$file_path" ]]; then
       echo "It's already here"
     else
       cd
