@@ -58,9 +58,11 @@ sudo chmod +x JAVELIN.sh.desktop
 echo "Done with that. Ready to move on?"
 read
 
-echo "Now building the local venv called javenv"
+echo "Now building the local(root) venv called javenv"
 echo "building local venv"
 cd
+cd ..
+cd ..
 python3 -m venv javenv
 source javenv/bin/activate
 pip install -r javelin/requirements.txt
