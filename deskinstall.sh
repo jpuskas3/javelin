@@ -14,14 +14,14 @@ sudo chmod +x gitcloning.sh
 echo "$directory: are we in the right place before we continue?"
 read
 
-echo "copying the javelin_start.sh start file to desktop"
-sudo cp javelin_start.sh ../
-echo "is javelin_start.sh on the desktop?" 
+echo "copying the start_javelin.sh start file to desktop"
+sudo cp start_javelin.sh ../
+echo "is start_javelin.sh on the desktop?" 
 read
 
 cd ..
 echo "making executable javelin_start.sh located in 'home/$USER/Desktop'"
-sudo chmod +x javelin_start.sh
+sudo chmod +x start_javelin.sh
 
 # Navigate to the .config directory
 cd
@@ -84,7 +84,7 @@ sleep 1
 echo "Checking/Editing .profile and for automated start lines..."
 # define the line to add to .bash_profile
 line_to_add='# Automatically open my app after login
-~/Desktop/javelin_start.sh'
+~/Desktop/start_javelin.sh'
 # Check if the line already exists in .bash_profile
 if ! grep -Fxq "$line_to_add" ~/.bash_profile; then
   # If the line doesn't exist, append it to .bash_profile
