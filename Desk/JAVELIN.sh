@@ -18,16 +18,17 @@ gnome-terminal -- sudo bash -c "
     # Wait for Docker to start (sleep for 2 seconds to give Docker some time)
     sleep 2
 
-    # Run intro.sh
-    bash /home/$USER/javelin/intro.sh
+    # Run intro.sh in a separate window
+    gnome-terminal -- bash -c 'source /home/$USER/javenv/bin/activate; bash /home/$USER/javelin/intro.sh; exec bash' &
 
-    # Start the Flask app's server control GUI (app_gui.py)
-    python3 /home/$USER/javelin/app_gui.py &
+    # Start the Flask app's server control GUI (app_gui.py) in a new window
+    gnome-terminal -- bash -c 'source /home/$USER/javenv/bin/activate; python3 /home/$USER/javelin/app_gui.py; exec bash' &
 
-    # Start the toolbar GUI (toolbar_gui.py)
-    python3 /home/$USER/javelin/toolbar_gui.py &
+    # Start the toolbar GUI (toolbar_gui.py) in a new window
+    gnome-terminal -- bash -c 'source /home/$USER/javenv/bin/activate; python3 /home/$USER/javelin/toolbar_gui.py; exec bash' &
 
     # Open Chromium with the specific window size and position
-    chromium --window-size=600,450 --window-position=1010,0 http://localhost:80
-    exec bash" 
-    # Keep terminal open after executing all commands
+    gnome-terminal -- bash -c 'chromium --window-size=600,450 --window-position=1010,0 http://localhost:80; exec bash' &
+
+    # Keep the root terminal open after executing all commands
+    exec bash"
