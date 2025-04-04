@@ -3,26 +3,21 @@ directory=$(pwd)
 
 echo "copying Desk folder to the desktop"
 sudo cp -r Desk ../Desktop
-echo "did it work?"
-read
-echo "entering Desk"
+echo "entering Desktop/Desk"
 cd
 cd Desktop/Desk
-
 echo "making gitcloning.sh executable"
 sudo chmod +x gitcloning.sh
-echo "$directory: are we in the right place before we continue?"
-read
-echo "copying the JAVELIN.sh and start_javelin.sh file to desktop"
-sudo cp JAVELIN.sh ../
+echo "$directory"
+echo "copying the edit_javelin.sh and start_javelin.sh file to desktop"
+sudo cp edit_javelin.sh ../
 sudo cp start_javelin.sh ../
+echo "making executable edit_javelin.sh and start_javelin.sh located in 'home/$USER/Desktop'"
+cd ..
+sudo chmod +x edit_javelin.sh
+sudo chmod +x start_javelin.sh
 echo "are they BOTH on the desktop?"
 read
-
-cd ..
-echo "making executable JAVELIN.sh and start_javelin.sh located in 'home/$USER/Desktop'"
-sudo chmod +x JAVELIN.sh
-sudo chmod +x start_javelin.sh
 
 # Navigate to the .config directory
 cd
@@ -56,32 +51,29 @@ echo "making executable JAVELIN.sh.desktop located in 'home/$USER/.config/autost
 cd
 cd .config/autostart
 sudo chmod +x JAVELIN.sh.desktop
-echo "Done with that. Ready to move on?"
+echo "Done autostart config. Ready to move on?"
 read
 
-echo "Now building the local venv called javenv"
-echo "building local venv"
+echo "Now building venv called javenv"
 cd
 python3 -m venv javenv
 source javenv/bin/activate
 pip install -r javelin/requirements.txt
 deactivate
-echo "javenv installation completed"
-read
-
+echo "javenv installation complete"
 echo "entering javelin directory"
+echo "making executable all javelin directory files"
 cd
 cd javelin
-
-echo "making executable all javelin directory files"
 sudo chmod +x JAVELIN.sh mom.sh butler.sh intro.sh asem
 echo "+"
 sudo chmod +x app_gui.py app.py toolbar_gui.py models.py
 echo "done"
 echo "Building the Docker image"
 docker build -t flask-app .
-echo "+"
+echo "Docker flask-app is built"
 cd ..
+echo "$directory"
 echo "if a file is moved, it maintains the owner's permissions, if it is copied new executable permissions must be re-established"
 echo "That's all. This should work"
 exit
