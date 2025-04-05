@@ -12,11 +12,13 @@ echo "$directory"
 echo "copying the edit_javelin.sh and start_javelin.sh file to desktop"
 sudo cp edit_javelin.sh ../
 sudo cp start_javelin.sh ../
+sudo cp delete_javelin.sh ../
 echo "making executable edit_javelin.sh and start_javelin.sh located in 'home/$USER/Desktop'"
 cd ..
 sudo chmod +x edit_javelin.sh
 sudo chmod +x start_javelin.sh
-echo "are they BOTH on the desktop?"
+sudo chmod +x delete_javelin.sh
+echo "are ALL 3 on the desktop?"
 read
 
 # Navigate to the .config directory
