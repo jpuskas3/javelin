@@ -65,13 +65,14 @@ echo "entering javelin directory"
 echo "making executable all javelin directory files"
 cd
 cd javelin
+cp -r templates index.html javelin.css static
 sudo chmod +x JAVELIN.sh mom.sh butler.sh intro.sh asem
 echo "+"
 sudo chmod +x app_gui.py app.py toolbar_gui.py models.py
-echo "done"
+echo "+"
 echo "Building the Docker image"
 docker build -t flask-app .
-echo "Docker flask-app is built"
+echo "Done"
 cd ..
 echo "$directory"
 echo "if a file is moved, it maintains the owner's permissions, if it is copied new executable permissions must be re-established"
