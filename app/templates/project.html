@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Try Server</title> 
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="javelin.css">
+</head>
+<body>
+  
+<!-- Header -->
+<div class="headerBlock" title="header block present">
+ <div class="header" title="Dash Header">
+  <button id="button1">Profile</button>
+  <button id="button2">Library</button>
+  <button id="button3">Labs</button>
+  <button id="button4">Network</button>
+  <button id="button5">Media</button>
+  <button id="button6">Maps</button>
+  
+ </div>
+</div>
+  
+<!-- Left Sidebar -->
+<div class="leftside" title="Left Sidebar">
+  <div class="sidebar-content">
+    <p><b>Left Sidebar: Contents</b></p>
+  </div>
+</div>
+
+<!-- Outer Main Wrapper -->
+<div class="main" title="Main Content Area">
+
+<!-- Dash (Face 1) Content Wrapper -->
+  <div class="face face1" title="Face 1: Dashboard">
+    <div class="body1" title="Body 1: Dashboard Content">
+      <iframe id="iframe1" src="dash_profile.html" style="width: 100%; height: 100%; border-radius: 10px;" frameborder="0"></iframe>
+    </div>
+    <div class="footer1" title="Footer 1: Services Footer">
+      <div class="footer-links">
+        <button target="iframe1" onclick="changeIframe1('dash_profile.html')">Dash</button>
+        <button target="iframe1" onclick="changeIframe1('dash_office.html')">Office</button>
+        <button target="iframe1" onclick="changeIframe1('dash_settings.html')">Settings</button>
+      </div>
+    </div>
+  </div>
+
+<!-- Library (Face 2) Content Wrapper -->
+  <div class="face face2" title="Face 2: Configure Services">
+    <div class="body2" title="Body 2: Configure Services Content">
+      <iframe id="iframe2" src="library.html" style="width: 100%; height: 100%; border-radius: 10px;" frameborder="0"></iframe>
+    </div>
+    <div class="footer2" title="Footer 2: Library Footer">
+      <div class="footer-links">
+        <button target="iframe2" onclick="changeIframe2('library.html')">Library</button>
+        <button target="iframe2" onclick="changeIframe2('lib_volumes.html')">Volumes</button>
+        <button target="iframe2" onclick="changeIframe2('lib_actions.html')">Actions</button>
+      </div>
+    </div>
+  </div>
+  
+<!-- Labs (Face 3) Content Wrapper -->
+  <div class="face face3" title="Face 3: Server Labs">
+    <div class="body3" title="Body 3: Server Labs Content">
+      <iframe id="iframe3" src="labs.html" style="width: 100%; height: 100%; border-radius: 10px;" frameborder="0"></iframe>
+    </div>
+    <div class="footer3" title="Footer 3: Server Labs Footer">
+      <div class="footer-links">
+        <button target="iframe3" onclick="changeIframe3('labs.html')">Scraper</button>
+        <button target="iframe3" onclick="changeIframe3('lab_containers.html')">Containers</button>
+        <button target="iframe3" onclick="changeIframe3('lab_build.html')">Build</button>
+        <button target="iframe3" onclick="changeIframe3('lab_actions.html')">Actions</button>
+      </div>
+    </div>
+  </div>
+<!-- Networks (Face 4) Content Wrapper -->
+  <div class="face face4" title="Face 4: Networks">
+    <div class="body4" title="Body 4: Networks Content">
+      <iframe id="iframe4" src="networks.html" style="width: 100%; height: 100%; border-radius: 10px;" frameborder="0"></iframe>
+    </div>
+    <div class="footer4" title="Footer 4: Networks Footer">
+      <div class="footer-links">
+        <button target="iframe4" onclick="changeIframe4('networks.html')">Networks</button>
+        <button target="iframe4" onclick="changeIframe4('lab_outputs.html')">new_win</button>
+        <button target="iframe4" onclick="changeIframe4('lab_actions.html')">new_win</button>
+      </div>
+    </div>
+  </div>
+
+<!-- Media (Face 5) Content Wrapper -->
+  <div class="face face5" title="Face 5: Media">
+    <div class="body5" title="Body 5: Media Content">
+      <iframe id="iframe5" src="media.html" style="width: 100%; height: 100%; border-radius: 10px;" frameborder="0"></iframe>
+    </div>
+    <div class="footer5" title="Footer 5: Media Footer">
+      <div class="footer-links">
+        <button target="iframe5" onclick="changeIframe5('media.html')">Media</button>
+        <button target="iframe5" onclick="changeIframe5('media_sources.html')">Sources</button>
+        <button target="iframe5" onclick="changeIframe5('media_options.html')">Options</button>
+      </div>
+    </div>
+  </div>
+
+<!-- Maps (Face 6) Content Wrapper -->
+  <div class="face face6" title="Face 6: Maps">
+    <div class="body6" title="Body 6: Maps Content">
+      <iframe id="iframe6" src="maps.html" style="width: 100%; height: 100%; border-radius: 10px;" frameborder="0"></iframe>
+    </div>
+    <div class="footer6" title="Footer 6: Maps Footer">
+      <div class="footer-links">
+        <button target="iframe6" onclick="changeIframe6('maps.html')">Maps</button>
+        <button target="iframe6" onclick="changeIframe6('map_overlays.html')">Overlays</button>
+        <button target="iframe6" onclick="changeIframe6('map_key.html')">Key</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Right Sidebar -->
+<div class="rightside" title="Right Sidebar">
+  <div class="sidebar-content">
+    <p>Right Sidebar: Contents</p>
+  </div>
+</div>
+
+<script>
+  // Function to change iframe source
+  function changeIframe1(src) {
+  document.getElementById('iframe1').src = src;
+  }
+  function changeIframe2(src) {
+  document.getElementById('iframe2').src = src;
+  }
+  function changeIframe3(src) {
+  document.getElementById('iframe3').src = src;
+  }
+  function changeIframe4(src) {
+  document.getElementById('iframe4').src = src;
+  }
+  function changeIframe5(src) {
+  document.getElementById('iframe5').src = src;
+  }
+  function changeIframe6(src) {
+  document.getElementById('iframe6').src = src;
+  }
+  
+  // Set the default display (Face 1 loaded on page load)
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.face1').style.display = 'flex';
+  });
+
+  // Function to change faces
+  function showFace(faceNumber) {
+    // Hide all faces
+    document.querySelector('.face1').style.display = 'none';
+    document.querySelector('.face2').style.display = 'none';
+    document.querySelector('.face3').style.display = 'none';
+    document.querySelector('.face4').style.display = 'none';
+    document.querySelector('.face5').style.display = 'none';
+    document.querySelector('.face6').style.display = 'none';
+   
+    // Show the selected face
+    document.querySelector('.face' + faceNumber).style.display = 'flex';
+  }
+
+  // Event listeners for buttons
+  document.getElementById('button1').addEventListener('click', function() {
+    showFace(1);
+  });
+
+  document.getElementById('button2').addEventListener('click', function() {
+    showFace(2);
+  });
+
+  document.getElementById('button3').addEventListener('click', function() {
+    showFace(3);
+  });
+
+  document.getElementById('button4').addEventListener('click', function() {
+    showFace(4);
+  });
+  
+  document.getElementById('button5').addEventListener('click', function() {
+    showFace(5);
+  });
+
+  document.getElementById('button6').addEventListener('click', function() {
+    showFace(6);
+  });
+</script>
+
+</body>
+</html>
