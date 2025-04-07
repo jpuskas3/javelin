@@ -1,4 +1,4 @@
-hiydeehooh# Use Python 3.9 slim as base image
+# Use Python 3.9 slim as base image
 FROM python:3.9-slim
 
 # Set the working directory
