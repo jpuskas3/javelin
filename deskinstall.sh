@@ -53,9 +53,7 @@ echo "making executable JAVELIN.sh.desktop located in 'home/$USER/.config/autost
 cd
 cd .config/autostart
 sudo chmod +x JAVELIN.sh.desktop
-echo "Done autostart config. Ready to move on?"
-read
-
+echo "Done autostart config"
 echo "Now building venv called javenv"
 cd
 python3 -m venv javenv
@@ -68,7 +66,8 @@ echo "making executable all javelin directory files"
 cd
 cd javelin
 cp -r templates index.html javelin.css static
-sudo chmod +x JAVELIN.sh mom.sh butler.sh intro.sh asem
+cp -r templates index.html javelin.css app
+sudo chmod +x write_structure.sh JAVELIN.sh mom.sh butler.sh intro.sh asem
 echo "+"
 sudo chmod +x app_gui.py app.py toolbar_gui.py models.py
 echo "+"
