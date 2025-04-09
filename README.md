@@ -17,11 +17,11 @@ Javelin is a modular, containerized application system built with Python, Flask,
 
 Javelin combines Flask, Docker, and PyQt to offer a modular platform for managing different applications and services. It provides:
 
-- A **web interface** to interact with backend services and modular containers.
-- A **PyQt GUI** for user authentication and managing app interactions.
-- A **modular container system** that allows for easily integrating new applications.
-- **Persistent data storage** for user accounts, logs, and caches.
-- A **Dockerized environment** for easy deployment and scalability.
+- A web interface to interact with backend services and modular containers.
+- A PyQt GUI for user authentication and managing app interactions.
+- A modular container system that allows for easily integrating new applications.
+- Persistent data storage for user accounts, logs, and caches.
+- A Dockerized environment for easy deployment and scalability.
 
 ## Features
 
@@ -37,30 +37,51 @@ Javelin combines Flask, Docker, and PyQt to offer a modular platform for managin
 To install Javelin, follow these steps:
 
 1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/javelin.git
-   cd javelin
-   
-Set up the Python virtual environment:
-python3 -m venv javenv
-source javenv/bin/activate
 
-Install the dependencies:
-pip install -r requirements.txt
+    ```bash
+    git clone https://github.com/yourusername/javelin.git
+    cd javelin
+    ```
 
-Build the Docker containers:
-docker-compose up --build
+2. Set up the Python virtual environment:
 
-Run the app:
-./1scripts/intro.sh
-Usage
+    ```bash
+    python3 -m venv javenv
+    source javenv/bin/activate
+    ```
+
+3. Install the dependencies:
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. Build the Docker containers:
+
+    ```bash
+    docker-compose up --build
+    ```
+
+5. Run the app:
+
+    ```bash
+    ./1scripts/intro.sh
+    ```
+
+## Usage
+
 Once installed, you can use Javelin to manage different services, access user data, and interact with modular applications through the web interface or PyQt GUI.
 
-Launch the PyQt GUI by running:
-python frontend/gui/app_gui.py
-Access the web interface via your browser at http://localhost:80.
+- Launch the PyQt GUI by running:
 
-Directory Structure
+    ```bash
+    python frontend/gui/app_gui.py
+    ```
+
+- Access the web interface via your browser at [http://localhost:80](http://localhost:80).
+
+## Directory Structure
+
 The project is organized into the following structure:
 
 /javelin/
@@ -73,25 +94,20 @@ The project is organized into the following structure:
 │   ├── mom.sh             # Script to manage and edit the project
 │   ├── butler.sh          # Utility or helper script
 │   ├── assembly/          # Assembly scripts related to app setup
-│ 
 ├── 2data/                 # Persistent data (user accounts, logs, cache)
 │   ├── logs/              # Log files
 │   ├── cache/             # Cached data
 │   ├── user_accounts/     # User account information
-│ 
 ├── 3docker/               # Docker configuration files
 │   ├── nginx.conf         # Nginx configuration
 │   ├── Dockerfile         # Docker build configuration
-│ 
 ├── 4instance/             # Instance-specific files such as databases (e.g., users.db)
 │   ├── users.db           # Database for managing user data
-│ 
 ├── backend/               # Flask app and backend services
 │   ├── app/               # Main app files
 │   │   ├── app.py         # Flask app entry point
 │   │   ├── models.py      # Database models
 │   │   ├── __init__.py    # App initialization
-│ 
 ├── frontend/              # Web interface and GUI components
 │   ├── static/            # Static files (CSS, images, etc.)
 │   │   ├── javelin.css    # Global styles for the frontend
@@ -102,7 +118,6 @@ The project is organized into the following structure:
 │   │   ├── app_gui.py     # Main login and dashboard GUI
 │   │   ├── static_resources/  # Static resources for the GUI (e.g., icons, CSS)
 │   ├── login_gui.py       # PyQt-based login GUI
-│ 
 ├── ocontainer/            # Modular containerized applications (DeckBoss, ZSkipper, etc.)
 │   ├── DeckBoss/          # Container for DeckBoss app
 │   ├── ZSkipper/          # Container for ZSkipper app
@@ -112,12 +127,10 @@ The project is organized into the following structure:
 │   ├── Media/             # Container for Media app
 │   ├── Library/           # Container for Library app
 │   ├── OpenContainer/     # Base container for other modular apps
-│ 
 ├── shared/                # Logs, cache, and shared data
 │   ├── logs/              # Shared log files
 │   ├── data/              # Shared data files
 │   ├── cache/             # Shared cached data
-│ 
 ├── templates/             # HTML templates for rendering in the web interface
 │   ├── index.html         # Main index page template│   
 │   ├── javelin.css        # Template-specific CSS file
@@ -141,33 +154,30 @@ The project is organized into the following structure:
 │   ├── media_options.html # Media options page template
 │   ├── networks.html      # Networks page template
 │   ├── settings.html
-│ 
 ├── index.html             # Frontend HTML file for serving GitHub Pages testing
 ├── javelin.css            # Global styling for the project
 ├── login_gui.py           # Main PyQt login interface for the app
 ├── requirements.txt       # Python dependencies file
 ├── write_structure.sh     # Script to generate a project structure overview (project_structure.txt)
 
-Scripts Overview
-intro.sh: This script is used to introduce and initialize the application, providing basic instructions or configuration.
+## Scripts Overview
 
-JAVELIN.sh: This is the main script responsible for launching the app, including initializing Docker containers and setting up the backend services.
+- **intro.sh**: This script is used to introduce and initialize the application, providing basic instructions or configuration.
+- **JAVELIN.sh**: This is the main script responsible for launching the app, including initializing Docker containers and setting up the backend services.
+- **deskinstall.sh**: Use this script to uninstall the app or clean up the environment.
+- **mom.sh**: A utility script to manage and edit the project’s configuration and components.
+- **butler.sh**: A helper script for miscellaneous tasks related to the application.
 
-deskinstall.sh: Use this script to uninstall the app or clean up the environment.
+## Requirements
 
-mom.sh: A utility script to manage and edit the project’s configuration and components.
+- Python 3.x
+- Docker
+- Docker Compose
+- PyQt5
+- Flask
+- A modern browser for the web interface
 
-butler.sh: A helper script for miscellaneous tasks related to the application.
+## License
 
-Requirements
-Python 3.x
-Docker
-Docker Compose
-PyQt5
-Flask
-A modern browser for the web interface
-
-This README.md file provides a complete overview of the Javelin project, including a detailed directory structure, installation steps, and an explanation of key scripts.
-
-License
 Distributed under the MIT License. See LICENSE for more information.
+
