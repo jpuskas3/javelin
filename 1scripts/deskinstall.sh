@@ -98,12 +98,14 @@ echo "7"
 
 cd ../shared
 echo "8"
-cd
 echo "Completed Executables"
+
+cd ../3docker
 echo "Building the Docker image"
 docker build -t flask-app .
 echo "Done"
 
+cd ..
 echo "$directory"
 echo "if a file is moved, it maintains the owner's permissions, if it is copied new executable permissions must be re-established"
 echo "That's all. This should work"
