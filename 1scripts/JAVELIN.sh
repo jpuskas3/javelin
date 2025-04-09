@@ -12,16 +12,15 @@ if [[ $(docker ps -aq -f name=flask-app) ]]; then
     echo "Stopping existing container..."
     docker stop flask-app
     docker rm flask-app
-else
-    echo "Building and starting a new container..."
-    docker build -t flask-app .
-    docker run -d --name flask-app -p 80:80 -p 5000:5000 flask-app
 fi
+echo "Building and starting a new container..."
+docker build -t flask-app .
+docker run -d --name flask-app -p 80:80 -p 5000:5000 flask-app
 
 python3 frontend/gui/toolbar_gui.py &
 python3 frontend/gui/app_gui.py &
 
-# Launch the web app to know it's working
+# Launch the web app to know it works
 chromium --window-size=600,767 --window-position=1015,-10 http://localhost:80 &
 echo "press enter to continue"
 read
