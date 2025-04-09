@@ -2,14 +2,11 @@
 directory=$(pwd)
 
 echo "copying Desk folder to the desktop"
-sudo cp -r Desk ../Desktop
+sudo cp -r Desk ../../Desktop
 echo "entering Desktop/Desk"
 cd
 cd Desktop/Desk
-echo "making gitcloning.sh executable"
-sudo chmod +x gitcloning.sh
-echo "$directory"
-echo "copying the edit_javelin.sh and start_javelin.sh file to desktop"
+echo "copying the edit_javelin.sh delete_javelin.sh and start_javelin.sh files to desktop"
 sudo cp edit_javelin.sh ../
 sudo cp start_javelin.sh ../
 sudo cp delete_javelin.sh ../
@@ -33,7 +30,7 @@ if [ -d "autostart" ]; then
       echo "It's already here"
     else
       cd
-      cd Desktop/Desk
+      cd javelin/1scripts
       sudo cp JAVELIN.sh.desktop ../../.config/autostart
     fi
 else
@@ -65,16 +62,48 @@ echo "entering javelin directory"
 echo "making executable all javelin directory files"
 cd
 cd javelin
-cp -r templates index.html javelin.css static
-cp -r templates index.html javelin.css app
-sudo chmod +x write_structure.sh JAVELIN.sh mom.sh butler.sh intro.sh asem
-echo "+"
-sudo chmod +x app_gui.py app.py toolbar_gui.py models.py
-echo "+"
+sudo chmod +x write_structure.sh login_gui.py
+cp -r templates index.html javelin.css frontend/static
+
+cd 1scripts
+sudo chmod +x JAVELIN.sh gitcloning.sh mom.sh butler.sh intro.sh assembly/asem
+echo "1"
+
+cd ../2data
+echo "2"
+
+cd ../3docker
+echo "3"
+
+cd ../4instance
+echo "4"
+
+cd ../backend
+cd app
+sudo chmod +x __init__.py app.py models.py
+cd ..
+echo "5"
+
+cd ../frontend
+cd static
+cd ../gui
+sudo chmod +x app_gui.py app.py toolbar_gui.py
+cd static_resources
+cd ..
+cd ..
+echo "6"
+
+cd ../ocontainer
+echo "7"
+
+cd ../shared
+echo "8"
+cd
+echo "Completed Executables"
 echo "Building the Docker image"
 docker build -t flask-app .
 echo "Done"
-cd ..
+
 echo "$directory"
 echo "if a file is moved, it maintains the owner's permissions, if it is copied new executable permissions must be re-established"
 echo "That's all. This should work"
