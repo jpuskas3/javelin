@@ -100,13 +100,12 @@ cd ../shared
 echo "8"
 echo "Completed Executables"
 
-cd ../3docker
-echo "Building the Docker image"
-docker build -t flask-app .
-echo "Done"
-
 cd ..
 echo "$directory"
+echo "Building the Docker image"
+docker build -f 3docker/Dockerfile -t flask_app .
+echo "Done"
+
 echo "if a file is moved, it maintains the owner's permissions, if it is copied new executable permissions must be re-established"
 echo "That's all. This should work"
 exit
