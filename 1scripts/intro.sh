@@ -5,22 +5,23 @@ age=$age
 compliment=$compliment
 
 #listen for $name from recorded user framework on external file that manages the value of "global" variables for users
-echo "who are you??"
+echo "what's your name?"
 read name
 if [[ $name == "john" ]]; then
-	age="29"
+	bday="4/24/1995"
+ 	age="almost 30"
 	sleep 1
 	echo "Oh it's you $name!"
 	echo "Butler!"
 	sleep 1
-	./butler.sh $name $age
 else
-	echo "How old are you?"
+	echo "what's your birthday"
+	read bday
+ 	echo "sorry how old does that make you?"
 	read age
-	sleep 1
 	echo "$name: $age"
-	sleep 1
 	echo "Enjoy your visit!"
 	sleep 1
-	./butler.sh $name $age
+	
 fi
+./butler.sh $name $age
