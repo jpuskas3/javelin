@@ -2,10 +2,10 @@
 FROM python:3.9-slim
 
 # Set the working directory
-WORKDIR /app
+WORKDIR ../backend/app
 
 # Copy the application code
-COPY . /app/
+COPY . ../backend/app/
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
