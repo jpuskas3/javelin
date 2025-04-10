@@ -63,8 +63,9 @@ echo "making executable all javelin directory files"
 cd
 cd javelin
 sudo chmod +x write_structure.sh login_gui.py
-cp -r templates index.html javelin.css frontend/static
-
+cd frontend
+cp -r ../templates ../index.html ../javelin.css static
+cp -r static ../backend/app
 cd 1scripts
 sudo chmod +x JAVELIN.sh gitcloning.sh mom.sh butler.sh intro.sh assembly/asem
 echo "1"
@@ -86,6 +87,7 @@ echo "5"
 
 cd ../frontend
 cd static
+cp -r templates index.html
 cd ../gui
 sudo chmod +x app_gui.py app.py toolbar_gui.py
 cd static_resources
