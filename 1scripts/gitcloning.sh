@@ -20,26 +20,25 @@ if [[ $opt == 1 ]]; then
         ./butler.sh $name $age $compliment
 
     elif [[ $opt == 2 ]]; then
-        git add
-        git commit
+        echo "not doing commits yet"
+# git add
+# git commit
 
     elif [[ $opt == 3 ]]; then
         cd
         cd Desktop
         sudo rm -r javelin
-        echo "how to clone from test branch?"
-        echo "not doing it yet"
-        read
-# git clone https://github.com/jpuskas3/javelin.git
+        git clone --branch test https://github.com/jpuskas3/javelin.git
     
     elif [[ $opt == 4 ]]; then
         cd
         cd Desktop/javelin
         echo "how to commit to test vs main?"
-        echo "not doing it yet"
+        echo "not doing commits yet"
         read
 # git add
 # git commit
+    
     else
         ./butler.sh $name $age $compliment
-    fi
+fi
