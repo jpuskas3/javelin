@@ -5,6 +5,7 @@ age=$age
 compliment=$compliment
 
 #listen for $name from recorded user framework on external file that manages the value of "global" variables for users
+echo "$directory"
 echo "what's your name?"
 read name
 if [[ $name == "john" ]]; then
