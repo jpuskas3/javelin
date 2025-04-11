@@ -81,10 +81,12 @@ sudo chmod +x __init__.py app.py models.py
 cd ..
 echo "4"
 
-cd ../frontend/static
-cp -r templates index.html
+cd ..
+cp -r templates index.html frontend/static
+
+cd frontend/static
 cd ../gui
-sudo chmod +x app_gui.py app.py toolbar_gui.py
+sudo chmod +x app_gui.py toolbar_gui.py
 cd static_resources
 cd ..
 cd ..
