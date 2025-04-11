@@ -2,7 +2,7 @@
 directory=$(pwd)
 sudo chmod +x JAVELIN.sh gitcloning.sh mom.sh butler.sh intro.sh assembly/asem
 echo "copying Desk folder to the desktop"
-sudo cp -r Desk ../../Desktop
+cp -r Desk ../../Desktop
 echo "entering Desktop/Desk"
 cd
 cd Desktop/Desk
