@@ -73,7 +73,7 @@ class MainWindow(QWidget):
 
         # intro.sh terminal
         if subprocess.run("xdotool search --name 'intro.sh; exec bash'", shell=True).returncode != 0:
-            subprocess.Popen(["xterm", "-T", "intro.sh; exec bash", "-e", "./intro.sh"])
+            subprocess.Popen(["xterm", "-T", "intro.sh; exec bash", "-e", "../../1scripts/intro.sh"])
         else:
             subprocess.run("xdotool search --name 'intro.sh; exec bash' windowmap", shell=True)
 
