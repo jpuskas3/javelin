@@ -25,4 +25,6 @@ else
 	sleep 1
 	
 fi
+cd
+cd javelin/1scripts
 ./butler.sh $name $age
