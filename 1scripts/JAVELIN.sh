@@ -3,7 +3,7 @@ cd
 source javenv/bin/activate
 
 cd javelin
-xterm -geometry 83x21+518+419 -e "bash -c 'source $HOME/javelin/1scripts/intro.sh; exec bash'" &
+xterm -geometry 83x21+518+419 "bash -c 'source $HOME/javelin/1scripts/intro.sh; exec bash'" &
 sleep 1  # Wait for the Konsole window to initialize
 python3 login_gui.py
 
@@ -21,7 +21,7 @@ python3 frontend/gui/toolbar_gui.py &
 python3 frontend/gui/app_gui.py &
 
 # Launch the web app to know it works
-chromium --window-size=600,767 --window-position=1015,-10 http://localhost:80 &
+chromium --window-size=600,767 --window-position=1015,-10 -e http://localhost:80 &
 echo "press enter to continue"
 read
 echo "OK"
