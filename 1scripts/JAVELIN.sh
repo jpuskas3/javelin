@@ -3,7 +3,7 @@ cd
 source javenv/bin/activate
 
 cd javelin
-xterm -e -geometry 83x21+518+419 "bash -c 'source $HOME/javelin/1scripts/intro.sh; exec bash'" &
+xterm -geometry 83x21+518+419 -e "bash -c 'source $HOME/javelin/1scripts/intro.sh; exec bash'" &
 sleep 1  # Wait for the Konsole window to initialize
 python3 login_gui.py
 
