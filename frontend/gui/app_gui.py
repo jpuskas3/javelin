@@ -1,133 +1,117 @@
 import sys
 import os
-import json
 import subprocess
-from PyQt5.QtCore import QThread, pyqtSignal
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QComboBox, QFileDialog
+from PyQt5.QtWidgets import (
+    QApplication, QWidget, QVBoxLayout, QLabel, QPushButton,
+    QComboBox, QFileDialog
+)
 
-class ServingTool(QWidget):
+class AppManager(QWidget):
     def __init__(self):
         super().__init__()
 
-        # Set up the window
-        self.setWindowTitle("Serving Tool")
-        self.setGeometry(520, 0, 500, 380)
+        self.setWindowTitle("App Manager")
+        self.setGeometry(520, 0, 500, 300)
 
-        # Layout for widgets
         self.layout = QVBoxLayout()
 
         # Status label
         self.status_label = QLabel("Status: Idle")
         self.layout.addWidget(self.status_label)
 
-        # File selection dropdown for selecting JSON files
-        self.file_label = QLabel("Select Data File:")
-        self.file_selector = QComboBox()
-        self.file_selector.addItem("Select a file")
-        self.file_selector.currentIndexChanged.connect(self.update_data_objects)
-        self.layout.addWidget(self.file_label)
-        self.layout.addWidget(self.file_selector)
+        # Make an App button
+        self.make_app_button = QPushButton("Make an App")
+        self.make_app_button.clicked.connect(self.make_app)
+        self.layout.addWidget(self.make_app_button)
 
-        # Data object selection dropdown
-        self.data_object_label = QLabel("Select Data Object:")
-        self.data_object_selector = QComboBox()
-        self.layout.addWidget(self.data_object_label)
-        self.layout.addWidget(self.data_object_selector)
+        # Select an App dropdown
+        self.app_selector_label = QLabel("Select an App:")
+        self.app_selector = QComboBox()
+        self.app_selector.addItem("Select an app")
+        self.layout.addWidget(self.app_selector_label)
+        self.layout.addWidget(self.app_selector)
 
-        # Serve button
-        self.serve_button = QPushButton("Serve Data")
-        self.serve_button.clicked.connect(self.serve_data)
-        self.layout.addWidget(self.serve_button)
+        # Start App button
+        self.start_app_button = QPushButton("Start App")
+        self.start_app_button.clicked.connect(self.start_app)
+        self.layout.addWidget(self.start_app_button)
 
-        # Start Flask server button
-        self.engage_button = QPushButton("Start Flask Server")
-        self.engage_button.clicked.connect(self.start_flask)
-        self.layout.addWidget(self.engage_button)
+        # Stop App button
+        self.stop_app_button = QPushButton("Stop App")
+        self.stop_app_button.clicked.connect(self.stop_app)
+        self.layout.addWidget(self.stop_app_button)
 
-        # Stop Flask server button
-        self.stop_flask_button = QPushButton("Stop Flask Server")
-        self.stop_flask_button.clicked.connect(self.stop_flask)
-        self.layout.addWidget(self.stop_flask_button)
-
-        # Set layout for the window
         self.setLayout(self.layout)
+        self.running_processes = {}
 
-        # Flask server subprocess variable
-        self.flask_process = None
+        # Populate the app selector on launch
+        self.update_app_selector()
 
-    def update_file_selector(self):
-        """Update file selector with available JSON files in the 'data' folder."""
-        self.file_selector.clear()
-        self.file_selector.addItem("Select a file")
+    def make_app(self):
+        """Trigger a script to make an app."""
+        # Here you can call a script or process to create a new app.
+        script_path = "path/to/your/make_app_script.sh"  # Update with actual script path
+        process = subprocess.Popen([script_path])
+        process.communicate()
+        
+        # After the script runs, update the app selector
+        self.update_app_selector()
+        self.status_label.setText("App created successfully.")
 
-        # Get all JSON files in the 'data' folder
-        data_files = [f for f in os.listdir('data') if f.endswith('.json')]
+    def update_app_selector(self):
+        """Scan a directory to update available containerized apps and display their ports."""
+        self.app_selector.clear()
+        self.app_selector.addItem("Select an app")
 
-        for file in data_files:
-            self.file_selector.addItem(file)
+        app_dir = "data/apps"  # You can change this path
+        if not os.path.exists(app_dir):
+            os.makedirs(app_dir)
 
-    def update_data_objects(self):
-        """Update the data object dropdown based on selected file."""
-        self.data_object_selector.clear()
+        apps = [f for f in os.listdir(app_dir) if os.path.isdir(os.path.join(app_dir, f))]
+        for app in apps:
+            # Example: Simulating the fetching of app port, replace with your actual logic
+            port = self.get_app_port(app)  # This could be dynamic based on your workflow
+            self.app_selector.addItem(f"{app} - Port {port}")
 
-        selected_file = self.file_selector.currentText()
-        if selected_file != "Select a file":
-            try:
-                with open(f"data/{selected_file}", "r") as f:
-                    data = json.load(f)
-                    # Assuming data has a 'headlines' key with an array of headlines
-                    if 'headlines' in data:
-                        self.data_object_selector.addItem("Select Data Object")
-                        for headline in data['headlines']:
-                            self.data_object_selector.addItem(headline)
-                    else:
-                        self.status_label.setText("Error: Invalid file format")
-            except Exception as e:
-                self.status_label.setText(f"Error loading file: {e}")
+    def get_app_port(self, app_name):
+        """Simulate fetching the port of the app. Replace with actual logic."""
+        # Replace this logic with how you track ports for each container
+        return 5000  # Default port for now, or fetch dynamically
 
-    def serve_data(self):
-        """Send selected data to app.py to serve."""
-        selected_file = self.file_selector.currentText()
-        selected_object = self.data_object_selector.currentText()
-
-        if selected_file == "Select a file" or selected_object == "Select Data Object":
-            self.status_label.setText("Error: Please select both file and data object.")
+    def start_app(self):
+        """Start the selected app (container)."""
+        selected_app = self.app_selector.currentText()
+        if selected_app == "Select an app":
+            self.status_label.setText("Error: Please select an app to start.")
             return
 
+        app_name = selected_app.split(' - ')[0]  # Extract app name from dropdown text
         try:
-            # Trigger app.py to serve the selected file and data object
-            self.status_label.setText(f"Serving {selected_object} from {selected_file}...")
-            response = subprocess.Popen(['python3', 'app.py', selected_file, selected_object])
-            response.communicate()
+            port = self.get_app_port(app_name)
+            process = subprocess.Popen(["docker", "start", app_name])
+            self.running_processes[app_name] = process
+            self.status_label.setText(f"{app_name} started on port {port}.")
         except Exception as e:
-            self.status_label.setText(f"Error: {e}")
+            self.status_label.setText(f"Error starting app: {e}")
 
-    def start_flask(self):
-        """Start Flask server in the background."""
-        if self.flask_process is None:
-            try:
-                # Start the Flask app (app.py) as a subprocess
-                self.flask_process = subprocess.Popen(['python3', 'app.py'])
-                self.status_label.setText("Flask server started.")
-            except Exception as e:
-                self.status_label.setText(f"Error starting Flask server: {e}")
+    def stop_app(self):
+        """Stop the selected app (container)."""
+        selected_app = self.app_selector.currentText()
+        if selected_app == "Select an app":
+            self.status_label.setText("Error: Please select an app to stop.")
+            return
 
-    def stop_flask(self):
-        """Stop Flask server."""
-        if self.flask_process is not None:
-            try:
-                self.flask_process.terminate()  # Gracefully terminate the Flask server
-                self.flask_process = None
-                self.status_label.setText("Flask server stopped.")
-            except Exception as e:
-                self.status_label.setText(f"Error stopping Flask server: {e}")
-        else:
-            self.status_label.setText("Flask server is not running.")
+        app_name = selected_app.split(' - ')[0]  # Extract app name from dropdown text
+        try:
+            subprocess.run(["docker", "stop", app_name])
+            self.running_processes.pop(app_name, None)
+            self.status_label.setText(f"{app_name} stopped.")
+        except Exception as e:
+            self.status_label.setText(f"Error stopping app: {e}")
 
 def main():
-    """Initialize and run the PyQt application."""
     app = QApplication(sys.argv)
-    window = ServingTool()
+    window = AppManager()
     window.show()
     sys.exit(app.exec_())
 
