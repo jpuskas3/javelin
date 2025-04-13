@@ -1,6 +1,6 @@
 import sys
 import subprocess
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QDesktopWidget
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton
 from PyQt5.QtCore import Qt, QPoint
 
 class MainWindow(QWidget):
@@ -17,9 +17,12 @@ class MainWindow(QWidget):
         # Reduce height for a more compact UI
         self.resize(200, 65)  # Reduced height
 
-        # Position in bottom-right corner
-        screen_rect = QDesktopWidget().availableGeometry()
-        self.move(screen_rect.width() - self.width() - 0, screen_rect.height() - self.height() - 10)
+        # Position in bottom-right corner using modern screen geometry
+        screen_geometry = QApplication.primaryScreen().availableGeometry()
+        self.move(
+            screen_geometry.width() - self.width() - 10,
+            screen_geometry.height() - self.height() - 10
+        )
 
         # Standard window controls and always on top
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
