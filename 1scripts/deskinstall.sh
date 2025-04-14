@@ -51,10 +51,17 @@ cd
 cd .config/autostart
 sudo chmod +x JAVELIN.sh.desktop
 echo "Done autostart config"
-echo "Now building venv called javenv"
+cd ../../javelin
+cp requirements.txt 1scripts
 cd
+
+echo "Now building venv called javenv"
 python3 -m venv javenv
 source javenv/bin/activate
+cd javelin
+echo "WHATS MY DIRECTORY: $directory"
+read
+
 pip install -r $directory/requirements.txt
 deactivate
 echo "javenv installation complete"
