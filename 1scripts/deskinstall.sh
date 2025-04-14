@@ -55,7 +55,7 @@ echo "Now building venv called javenv"
 cd
 python3 -m venv javenv
 source javenv/bin/activate
-pip install -r javelin/requirements.txt
+pip install -r $directory/requirements.txt
 deactivate
 echo "javenv installation complete"
 echo "entering javelin directory"
