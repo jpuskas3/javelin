@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login - JAVELIN</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    #login-box {
+      border: 1px solid #ccc;
+      padding: 1em;
+      border-radius: 10px;
+      width: 300px;
+    }
+    input {
+      width: 100%;
+      margin: 0.5em 0;
+      padding: 0.5em;
+    }
+    button {
+      width: 100%;
+      padding: 0.5em;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    #message {
+      margin-top: 1em;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div id="login-box">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const res = await fetch("/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ username, password })
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        document.getElementById("message").style.color = "green";
+        document.getElementById("message").innerText = "Login successful!";
+        // Redirect to another page or show a dashboard
+        setTimeout(() => window.location.href = "/dashboard.html", 1000);
+      } else {
+        document.getElementById("message").style.color = "red";
+        document.getElementById("message").innerText = data.message || "Login failed.";
+      }
+    }
+  </script>
+</body>
+</html>
