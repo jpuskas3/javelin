@@ -38,6 +38,25 @@ def saved_points():
         for point in points
     ])
 
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    username = data.get("username")
+    password = data.get("password")
+    user = User.query.filter_by(username=username).first()
+
+    if user and check_password_hash(user.password, password):
+        login_user(user)
+        return jsonify({"success": True})
+    else:
+        return jsonify({"success": False, "message": "Invalid credentials"}), 401
+
+@app.route("/logout", methods=["POST"])
+@login_required
+def logout():
+    logout_user()
+    return jsonify({"success": True})
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
