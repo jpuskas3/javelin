@@ -4,7 +4,7 @@ import sqlite3
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout, QMessageBox
 from PyQt5.QtCore import Qt
 
-USER_DB_DIR = "4instance"
+USER_DB_DIR = "instance"
 os.makedirs(USER_DB_DIR, exist_ok=True)
 
 def get_user_db_path(username):
@@ -73,7 +73,7 @@ class LoginRegisterWindow(QWidget):
         if validate_user(username, password):
             QMessageBox.information(self, "Success", "Login successful!")
             self.close()
-            # TODO: Launch container + use 4instance/<username>.db
+            # TODO: Launch container + use instance/<username>.db
         else:
             QMessageBox.warning(self, "Error", "Invalid credentials.")
 
