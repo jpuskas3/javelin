@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en" data-nexus-version="1.0.0" data-app="javelin">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Javelin — Nexus</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="nexus.css" />
+
+  <style>
+    body { visibility: hidden; }
+    body.nexus-ready { visibility: visible; }
+
+    /* Javelin branding overrides */
+    :root {
+      --brand-primary: var(--cyan);
+      --brand-name:    'Javelin';
+    }
+
+    .nexus-logo-mark {
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--yellow) 100%);
+    }
+  </style>
+</head>
+<body>
+
+<div class="nexus-shell" id="nexus-shell">
+
+  <!-- HEADER -->
+  <header class="nexus-header" role="banner">
+    <div class="nexus-logo" title="Javelin Nexus v1.0">
+      <div class="nexus-logo-mark" aria-hidden="true">J</div>
+      <span>Javelin</span>
+    </div>
+
+    <nav class="nexus-nav" role="navigation" aria-label="Module navigation">
+      <button class="nexus-nav-btn active" data-panel="dashboard">
+        <span class="nexus-nav-icon">⬛</span> Dashboard
+      </button>
+      <button class="nexus-nav-btn" data-panel="projects">
+        <span class="nexus-nav-icon">📋</span> Projects
+        <span class="nav-badge" id="badge-projects">0</span>
+      </button>
+      <button class="nexus-nav-btn" data-panel="containers">
+        <span class="nexus-nav-icon">📦</span> Containers
+      </button>
+      <button class="nexus-nav-btn" data-panel="library">
+        <span class="nexus-nav-icon">📚</span> Library
+      </button>
+      <button class="nexus-nav-btn" data-panel="labs">
+        <span class="nexus-nav-icon">🧪</span> Labs
+      </button>
+      <button class="nexus-nav-btn" data-panel="networks">
+        <span class="nexus-nav-icon">🌐</span> Networks
+      </button>
+      <button class="nexus-nav-btn" data-panel="media">
+        <span class="nexus-nav-icon">🎬</span> Media
+      </button>
+      <button class="nexus-nav-btn" data-panel="maps">
+        <span class="nexus-nav-icon">🗺</span> Maps
+      </button>
+      <button class="nexus-nav-btn" data-panel="integrations">
+        <span class="nexus-nav-icon">🔗</span> Integrations
+      </button>
+      <button class="nexus-nav-btn" data-panel="governance">
+        <span class="nexus-nav-icon">🔒</span> Governance
+      </button>
+    </nav>
+
+    <div class="nexus-header-trail">
+      <div class="flex items-center gap-8">
+        <div class="status-dot online" id="status-connectivity"></div>
+        <span class="text-xs text-muted" id="status-label">Online</span>
+      </div>
+      <div class="badge badge-cyan" id="user-badge">
+        <span id="user-display">Guest</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="btn-logout" title="Logout">↩ Logout</button>
+      <button class="btn btn-ghost btn-sm btn-icon" data-panel="settings">⚙</button>
+    </div>
+  </header>
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="nexus-sidebar">
+    <div class="sidebar-section-title">Quick Actions</div>
+    <button class="sidebar-item" id="btn-new-project">
+      <span class="sidebar-item-icon">＋</span> New Project
+    </button>
+    <button class="sidebar-item" id="btn-new-container">
+      <span class="sidebar-item-icon">📦</span> New Container
+    </button>
+    <button class="sidebar-item" id="btn-sync-all">
+      <span class="sidebar-item-icon">↻</span> Sync All
+    </button>
+
+    <div class="divider" style="margin: 8px 16px;"></div>
+
+    <div class="sidebar-section-title">Containers</div>
+    <div id="container-tree" style="flex:1; overflow-y:auto;">
+      <!-- Populated by container module list -->
+      <div class="sidebar-item" data-container="DeckBoss">
+        <span class="sidebar-item-icon">🃏</span> DeckBoss
+        <span class="badge badge-shale sidebar-item-meta">Idle</span>
+      </div>
+      <div class="sidebar-item" data-container="ZSkipper">
+        <span class="sidebar-item-icon">⛵</span> ZSkipper
+        <span class="badge badge-shale sidebar-item-meta">Idle</span>
+      </div>
+      <div class="sidebar-item" data-container="DataFarm">
+        <span class="sidebar-item-icon">🌾</span> DataFarm
+        <span class="badge badge-shale sidebar-item-meta">Idle</span>
+      </div>
+      <div class="sidebar-item" data-container="Captain">
+        <span class="sidebar-item-icon">⚓</span> Captain
+        <span class="badge badge-shale sidebar-item-meta">Idle</span>
+      </div>
+      <div class="sidebar-item" data-container="Maps">
+        <span class="sidebar-item-icon">🗺</span> Maps
+        <span class="badge badge-shale sidebar-item-meta">Idle</span>
+      </div>
+    </div>
+
+    <div class="divider" style="margin: 8px 16px;"></div>
+
+    <div style="padding:12px 16px;">
+      <div class="text-xs text-muted" style="margin-bottom:4px;">Javelin Instance</div>
+      <div class="flex items-center gap-8 text-xs mt-4">
+        <span class="badge badge-green" id="auth-status-badge">Authenticated</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="nexus-main" role="main">
+
+    <div class="offline-banner" id="offline-banner" style="display:none;">
+      ⚠ Offline — serving from local cache. Changes sync on reconnect.
+    </div>
+
+    <!-- Dashboard panel -->
+    <section class="nexus-panel active" id="panel-dashboard">
+      <div class="section-header">
+        <h1 class="section-title">Dashboard</h1>
+        <span class="section-subtitle">Javelin ecosystem overview</span>
+        <button class="btn btn-primary btn-sm" data-panel="projects">Projects →</button>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat-card cyan">
+          <div class="stat-value cyan" id="stat-projects">0</div>
+          <div class="stat-label">Active Projects</div>
+        </div>
+        <div class="stat-card yellow">
+          <div class="stat-value yellow" id="stat-containers">5</div>
+          <div class="stat-label">Containers Available</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-value green" id="stat-tasks">0</div>
+          <div class="stat-label">Open Tasks</div>
+        </div>
+        <div class="stat-card shale">
+          <div class="stat-value" id="stat-user">—</div>
+          <div class="stat-label">Logged In As</div>
+        </div>
+      </div>
+
+      <div class="flex gap-16" style="flex:1; min-height:0; overflow:hidden;">
+        <div class="card flex-col" style="flex:1.5; overflow:hidden;">
+          <div class="card-header">
+            <span class="card-title">Recent Projects</span>
+            <button class="btn btn-ghost btn-sm" data-panel="projects">View all →</button>
+          </div>
+          <div id="recent-projects" style="overflow-y:auto; flex:1;">
+            <div class="empty-state" style="padding:24px 0;">
+              <div class="empty-state-icon">📋</div>
+              <div class="empty-state-body">No projects yet.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card flex-col" style="flex:1; overflow:hidden;">
+          <div class="card-header">
+            <span class="card-title">Activity</span>
+            <div class="status-dot syncing"></div>
+          </div>
+          <div id="activity-feed" style="overflow-y:auto; flex:1;">
+            <div class="empty-state" style="padding:24px 0;">
+              <div class="empty-state-body">Activity will appear here.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects panel -->
+    <section class="nexus-panel" id="panel-projects">
+      <div class="section-header">
+        <h1 class="section-title">Projects</h1>
+        <span class="section-subtitle" id="projects-count-label">—</span>
+        <button class="btn btn-primary btn-sm" id="btn-new-project-main">＋ New Project</button>
+      </div>
+
+      <div class="flex gap-8 items-center">
+        <input class="input-field" id="project-search" placeholder="Search projects…" style="max-width:280px;" />
+        <span class="badge badge-cyan" data-filter="all">All</span>
+        <span class="badge badge-shale" data-filter="active">Active</span>
+        <span class="badge badge-shale" data-filter="completed">Done</span>
+      </div>
+
+      <div id="project-list" style="display:flex; flex-direction:column; gap:8px; overflow-y:auto; flex:1;">
+        <div class="empty-state">
+          <div class="empty-state-icon">📋</div>
+          <div class="empty-state-title">No projects yet</div>
+          <div class="empty-state-body">Create your first project to start organizing your Javelin containers and tasks.</div>
+          <button class="btn btn-primary" id="btn-create-first-project">＋ Create Project</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Containers panel (Javelin-specific) -->
+    <section class="nexus-panel" id="panel-containers">
+      <div class="section-header">
+        <h1 class="section-title">Containers</h1>
+        <span class="section-subtitle">Modular application containers</span>
+        <button class="btn btn-primary btn-sm" id="btn-new-container-main">＋ Deploy Container</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px;">
+        <!-- DeckBoss -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:24px;">🃏</span>
+            <span class="card-title">DeckBoss</span>
+            <span class="badge badge-shale" id="status-deckboss">Idle</span>
+          </div>
+          <p class="text-xs text-muted" style="margin-bottom:12px;">Deck and card management container. Manages project workflows and card-based task organization.</p>
+          <div class="flex gap-8">
+            <button class="btn btn-green btn-sm" data-start-container="DeckBoss">▶ Start</button>
+            <button class="btn btn-secondary btn-sm" data-config-container="DeckBoss">Config</button>
+            <button class="btn btn-secondary btn-sm" data-logs-container="DeckBoss">Logs</button>
+          </div>
+        </div>
+
+        <!-- ZSkipper -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:24px;">⛵</span>
+            <span class="card-title">ZSkipper</span>
+            <span class="badge badge-shale" id="status-zskipper">Idle</span>
+          </div>
+          <p class="text-xs text-muted" style="margin-bottom:12px;">Navigation and routing container. Manages data flows between containers and external systems.</p>
+          <div class="flex gap-8">
+            <button class="btn btn-green btn-sm" data-start-container="ZSkipper">▶ Start</button>
+            <button class="btn btn-secondary btn-sm" data-config-container="ZSkipper">Config</button>
+            <button class="btn btn-secondary btn-sm" data-logs-container="ZSkipper">Logs</button>
+          </div>
+        </div>
+
+        <!-- DataFarm -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:24px;">🌾</span>
+            <span class="card-title">DataFarm</span>
+            <span class="badge badge-shale" id="status-datafarm">Idle</span>
+          </div>
+          <p class="text-xs text-muted" style="margin-bottom:12px;">Data ingestion and processing container. Harvests, cleans, and stores data from scraping pipelines.</p>
+          <div class="flex gap-8">
+            <button class="btn btn-green btn-sm" data-start-container="DataFarm">▶ Start</button>
+            <button class="btn btn-secondary btn-sm" data-config-container="DataFarm">Config</button>
+            <button class="btn btn-secondary btn-sm" data-logs-container="DataFarm">Logs</button>
+          </div>
+        </div>
+
+        <!-- Captain -->
+        <div class="card">
+          <div class="card-header">
+            <span style="font-size:24px;">⚓</span>
+            <span class="card-title">Captain</span>
+            <span class="badge badge-shale" id="status-captain">Idle</span>
+          </div>
+          <p class="text-xs text-muted" style="margin-bottom:12px;">Container orchestration and health monitoring. Manages the lifecycle of all Javelin containers.</p>
+          <div class="flex gap-8">
+            <button class="btn btn-green btn-sm" data-start-container="Captain">▶ Start</button>
+            <button class="btn btn-secondary btn-sm" data-config-container="Captain">Config</button>
+            <button class="btn btn-secondary btn-sm" data-logs-container="Captain">Logs</button>
+          </div>
+        </div>
+
+        <!-- OpenContainer -->
+        <div class="card" style="border-style:dashed;">
+          <div class="card-header">
+            <span style="font-size:24px;">📦</span>
+            <span class="card-title">OpenContainer</span>
+            <span class="badge badge-shale">Template</span>
+          </div>
+          <p class="text-xs text-muted" style="margin-bottom:12px;">Base template for new containers. Fork this to create a new modular application for the Javelin ecosystem.</p>
+          <div class="flex gap-8">
+            <button class="btn btn-yellow btn-sm" id="btn-fork-opencontainer">Fork Template</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Container log viewer -->
+      <div class="card" id="container-log-card" style="display:none;">
+        <div class="card-header">
+          <span class="card-title" id="log-container-name">Container Log</span>
+          <button class="btn btn-ghost btn-sm btn-icon" id="btn-close-log">✕</button>
+        </div>
+        <div class="log-terminal" id="container-log" style="height:240px;"></div>
+      </div>
+    </section>
+
+    <!-- Library, Labs, Networks, Media, Maps — same as workstation -->
+    <section class="nexus-panel" id="panel-library">
+      <div class="section-header">
+        <h1 class="section-title">Library</h1>
+        <span class="section-subtitle">Assets, volumes, documents</span>
+        <button class="btn btn-primary btn-sm">＋ Add Resource</button>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">📚</div>
+          <div class="empty-state-title">Library is empty</div>
+          <div class="empty-state-body">Add volumes and documents to build your library.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="nexus-panel" id="panel-labs">
+      <div class="section-header">
+        <h1 class="section-title">Labs</h1>
+        <span class="section-subtitle">Build and run lab scripts</span>
+        <button class="btn btn-green btn-sm">▶ Run</button>
+      </div>
+      <div class="card">
+        <div class="log-terminal" id="lab-log">
+          <div class="log-line info">[nexus:lab] Ready.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="nexus-panel" id="panel-networks">
+      <div class="section-header">
+        <h1 class="section-title">Networks</h1>
+        <span class="section-subtitle">Local and remote topology</span>
+      </div>
+      <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div class="stat-card cyan"><div class="stat-value cyan">0</div><div class="stat-label">Active</div></div>
+        <div class="stat-card yellow"><div class="stat-value yellow">0</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card green"><div class="stat-value green">0</div><div class="stat-label">Services</div></div>
+      </div>
+    </section>
+
+    <section class="nexus-panel" id="panel-media">
+      <div class="section-header">
+        <h1 class="section-title">Media</h1>
+        <span class="section-subtitle">Sources and streams</span>
+        <button class="btn btn-primary btn-sm">＋ Add Source</button>
+      </div>
+      <div class="card">
+        <div class="empty-state">
+          <div class="empty-state-icon">🎬</div>
+          <div class="empty-state-title">No media sources</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="nexus-panel" id="panel-maps">
+      <div class="section-header">
+        <h1 class="section-title">Maps</h1>
+        <span class="section-subtitle">Spatial data and overlays</span>
+      </div>
+      <div class="map-container" style="flex:1; min-height:400px;">
+        <div class="empty-state" style="height:100%;">
+          <div class="empty-state-icon">🗺</div>
+          <div class="empty-state-title">Map viewer — wire a provider to display maps</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Integrations panel -->
+    <section class="nexus-panel" id="panel-integrations">
+      <div class="section-header">
+        <h1 class="section-title">Integrations</h1>
+        <span class="section-subtitle">Connect your external ecosystem</span>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:14px;">
+        <div class="card" id="config-airtable">
+          <div class="card-header">
+            <span style="font-size:24px;">📊</span>
+            <span class="card-title">Airtable</span>
+            <span class="badge badge-shale" id="airtable-status-badge">Disconnected</span>
+          </div>
+          <div class="input-group"><label class="input-label">API Key</label>
+            <input class="input-field" type="password" id="airtable-api-key" placeholder="key•••••" /></div>
+          <div class="input-group mt-8"><label class="input-label">Base ID</label>
+            <input class="input-field" id="airtable-base-id" placeholder="appXXXXXXXX" /></div>
+          <div class="flex gap-8 mt-12">
+            <button class="btn btn-primary btn-sm" id="btn-connect-airtable">Connect</button>
+            <button class="btn btn-ghost btn-sm" id="btn-sync-airtable-now" style="margin-left:auto;">↻ Sync</button>
+          </div>
+        </div>
+        <div class="card" id="config-ai">
+          <div class="card-header">
+            <span style="font-size:24px;">🤖</span>
+            <span class="card-title">AI (Claude)</span>
+            <span class="badge badge-shale" id="ai-status-badge">Disconnected</span>
+          </div>
+          <div class="input-group"><label class="input-label">Anthropic API Key</label>
+            <input class="input-field" type="password" id="ai-api-key" placeholder="sk-ant-•••" /></div>
+          <div class="input-group mt-8"><label class="input-label">Model</label>
+            <select class="input-field" id="ai-model">
+              <option value="claude-sonnet-4-6">Claude Sonnet 4.6</option>
+              <option value="claude-opus-4-7">Claude Opus 4.7</option>
+            </select>
+          </div>
+          <div class="flex gap-8 mt-12">
+            <button class="btn btn-primary btn-sm" id="btn-connect-ai">Connect</button>
+            <button class="btn btn-yellow btn-sm" id="btn-ai-assist">✨ Ask AI</button>
+          </div>
+        </div>
+        <div class="card" id="config-github">
+          <div class="card-header">
+            <span style="font-size:24px;">⚙</span>
+            <span class="card-title">GitHub</span>
+            <span class="badge badge-shale" id="github-status-badge">Disconnected</span>
+          </div>
+          <div class="input-group"><label class="input-label">Personal Access Token</label>
+            <input class="input-field" type="password" id="github-pat" placeholder="ghp_•••" /></div>
+          <div class="input-group mt-8"><label class="input-label">Default Repo</label>
+            <input class="input-field" id="github-repo" value="jpuskas3/javelin" /></div>
+          <div class="flex gap-8 mt-12">
+            <button class="btn btn-primary btn-sm" id="btn-connect-github">Connect</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Governance panel -->
+    <section class="nexus-panel" id="panel-governance">
+      <div class="section-header">
+        <h1 class="section-title">Governance</h1>
+        <span class="section-subtitle">Owner sovereignty — your machine, your rules</span>
+        <button class="btn btn-primary btn-sm" id="btn-save-policy">Save Policy</button>
+      </div>
+      <div class="flex gap-16" style="flex:1; min-height:0; overflow:hidden;">
+        <div class="card flex-col" style="flex:1;">
+          <div class="card-header"><span class="card-title">Active Policy</span></div>
+          <textarea class="input-field" id="policy-editor"
+            style="flex:1; min-height:280px; font-family:var(--font-mono); font-size:var(--font-xs); resize:none; line-height:1.7;"
+            spellcheck="false"></textarea>
+          <div class="flex gap-8 mt-8">
+            <button class="btn btn-secondary btn-sm" id="btn-reset-policy">Reset</button>
+            <button class="btn btn-secondary btn-sm" id="btn-validate-policy">Validate</button>
+          </div>
+        </div>
+        <div class="card flex-col" style="width:320px; flex-shrink:0; overflow:hidden;">
+          <div class="card-header"><span class="card-title">Audit Log</span></div>
+          <div id="audit-log" class="log-terminal" style="flex:1; min-height:0;">
+            <div class="log-line info">[governance] Ready.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Settings panel -->
+    <section class="nexus-panel" id="panel-settings">
+      <div class="section-header">
+        <h1 class="section-title">Settings</h1>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">Javelin Instance</span></div>
+        <div class="input-group" style="max-width:360px;">
+          <label class="input-label">Instance Name</label>
+          <input class="input-field" id="settings-instance" placeholder="My Javelin" value="Javelin Workstation" />
+        </div>
+        <div class="flex gap-8 mt-12">
+          <button class="btn btn-primary btn-sm" id="btn-save-settings">Save</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="nexus-sidebar right">
+    <div class="sidebar-section-title">AI Assistant</div>
+    <div style="padding:0 8px; margin-bottom:8px;">
+      <div class="card" style="padding:10px;">
+        <textarea class="input-field" id="ai-quick-input"
+          placeholder="Ask AI about your Javelin containers…"
+          style="min-height:64px; font-size:var(--font-xs); resize:none;"></textarea>
+        <button class="btn btn-yellow btn-sm w-full mt-8" id="btn-ai-quick-ask">✨ Ask</button>
+        <div id="ai-quick-response" class="text-xs text-muted mt-8" style="min-height:32px;"></div>
+      </div>
+    </div>
+
+    <div class="divider" style="margin:4px 16px;"></div>
+
+    <div class="sidebar-section-title">Live Activity</div>
+    <div id="sidebar-activity" style="flex:1; overflow-y:auto; padding:0 8px;">
+      <div class="empty-state" style="padding:20px 8px;">
+        <div class="empty-state-body">No activity yet.</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- FOOTER -->
+  <footer class="nexus-footer">
+    <div class="footer-tabs">
+      <button class="footer-tab active" data-panel="dashboard">Dashboard</button>
+      <button class="footer-tab" data-panel="projects">Projects</button>
+      <button class="footer-tab" data-panel="containers">Containers</button>
+      <button class="footer-tab" data-panel="labs">Labs</button>
+      <button class="footer-tab" data-panel="integrations">Integrations</button>
+    </div>
+    <div class="footer-status">
+      <div class="status-dot online" id="footer-status-dot"></div>
+      <span id="footer-status-text">Javelin ready</span>
+      <span style="opacity:.3;">|</span>
+      <span class="text-xs text-muted">User: <span id="footer-user">—</span></span>
+      <span style="opacity:.3;">|</span>
+      <span class="text-xs text-muted" id="footer-time">—</span>
+    </div>
+  </footer>
+
+</div><!-- /nexus-shell -->
+
+<div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+<template id="tmpl-modal-new-project">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">New Project</span>
+      <button class="btn btn-ghost btn-sm btn-icon modal-close">✕</button>
+    </div>
+    <div style="display:flex; flex-direction:column; gap:10px;">
+      <div class="input-group">
+        <label class="input-label">Project Name</label>
+        <input class="input-field" id="new-project-name" placeholder="Enter project name…" autofocus />
+      </div>
+      <div class="input-group">
+        <label class="input-label">Description</label>
+        <textarea class="input-field" id="new-project-desc" style="min-height:64px;resize:none;" placeholder="What is this project about?"></textarea>
+      </div>
+    </div>
+    <div class="flex gap-8 mt-16">
+      <button class="btn btn-primary" id="btn-confirm-new-project">Create</button>
+      <button class="btn btn-ghost modal-close">Cancel</button>
+    </div>
+  </div>
+</template>
+
+<script type="module">
+import { bus        } from './core/bus.js';
+import { store      } from './core/store.js';
+import { gateway    } from './core/gateway.js';
+import { governance } from './core/governance.js';
+
+// Service worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./core/worker.js').catch(() => {});
+}
+
+await store.ready;
+await governance.init();
+gateway.setPolicy(governance);
+
+// Register routes
+gateway.register('projects.list',   () => store.getAll('projects'));
+gateway.register('projects.create', (p) => store.set('projects', p.id ?? crypto.randomUUID(), p));
+gateway.register('tasks.list',      (p) => store.query('tasks', t => t.projectId === p.projectId));
+
+// Auth integration — check session with Javelin Flask backend
+async function checkAuth() {
+  try {
+    const res  = await fetch('/api/hello');
+    if (res.ok) {
+      const data = await res.json();
+      setUser(data.user ?? 'authenticated');
+    }
+  } catch {
+    setUser('local');
+  }
+}
+
+function setUser(name) {
+  document.getElementById('user-display').textContent  = name;
+  document.getElementById('footer-user').textContent   = name;
+  document.getElementById('stat-user').textContent     = name;
+  bus.emit('auth:user_set', { user: name });
+}
+
+// Navigation
+function showPanel(name) {
+  document.querySelectorAll('.nexus-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('[data-panel]').forEach(b => {
+    b.classList.toggle('active', b.dataset.panel === name);
+  });
+  const panel = document.getElementById(`panel-${name}`);
+  if (panel) panel.classList.add('active');
+  bus.emit('ui:panel_change', { panel: name });
+}
+
+document.querySelectorAll('[data-panel]').forEach(el =>
+  el.addEventListener('click', () => showPanel(el.dataset.panel))
+);
+
+// Toast
+function toast(msg, type = 'info', dur = 3500) {
+  const c  = document.getElementById('toast-container');
+  const t  = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<span>${msg}</span><button class="btn btn-ghost btn-sm btn-icon" onclick="this.closest('.toast').remove()" style="margin-left:auto;">✕</button>`;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), dur);
+}
+window.toast = toast;
+
+// Projects
+async function renderProjects() {
+  const projects = await gateway.call('projects.list');
+  const badge    = document.getElementById('badge-projects');
+  const countLbl = document.getElementById('projects-count-label');
+  if (badge)    badge.textContent  = projects.length;
+  if (countLbl) countLbl.textContent = `${projects.length} projects`;
+  document.getElementById('stat-projects').textContent = projects.filter(p => p.status === 'active').length;
+}
+
+// Activity
+function addActivity(msg, color = 'cyan') {
+  ['activity-feed', 'sidebar-activity'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.querySelector('.empty-state')) el.innerHTML = '';
+    el.insertAdjacentHTML('afterbegin', `
+      <div class="activity-item">
+        <div class="activity-dot ${color}"></div>
+        <div class="activity-content">
+          <div>${msg}</div>
+          <div class="activity-time">${new Date().toLocaleTimeString()}</div>
+        </div>
+      </div>`);
+  });
+}
+
+bus.on('projects:created', (p) => addActivity(`Project: ${p.name}`, 'cyan'));
+bus.on('auth:user_set',    (e) => addActivity(`Logged in as ${e.user}`, 'green'));
+
+// Governance panel
+async function initGovernance() {
+  const policy = governance.getPolicy();
+  const editor = document.getElementById('policy-editor');
+  if (editor) editor.value = JSON.stringify(policy, null, 2);
+
+  bus.on('governance:audit', (e) => {
+    const log  = document.getElementById('audit-log');
+    if (!log) return;
+    const line = document.createElement('div');
+    line.className = `log-line ${e.allowed ? 'success' : 'warn'}`;
+    line.textContent = `[${new Date(e.ts).toLocaleTimeString()}] ${e.allowed ? 'ALLOW' : 'DENY'} ${e.route}`;
+    log.insertBefore(line, log.firstChild);
+  });
+
+  document.getElementById('btn-save-policy')?.addEventListener('click', async () => {
+    try { await governance.setPolicy(JSON.parse(editor.value)); toast('Policy saved', 'success'); }
+    catch { toast('Invalid JSON', 'error'); }
+  });
+}
+
+// Connectivity
+function updateConnectivity() {
+  const online = navigator.onLine;
+  document.getElementById('status-connectivity')?.classList.toggle('online', online);
+  document.getElementById('status-connectivity')?.classList.toggle('warning', !online);
+  document.getElementById('status-label').textContent        = online ? 'Online' : 'Offline';
+  document.getElementById('offline-banner').style.display    = online ? 'none' : 'flex';
+  document.getElementById('footer-status-dot')?.classList.toggle('online', online);
+}
+
+window.addEventListener('online',  updateConnectivity);
+window.addEventListener('offline', updateConnectivity);
+updateConnectivity();
+
+// Clock
+setInterval(() => {
+  const el = document.getElementById('footer-time');
+  if (el) el.textContent = new Date().toLocaleTimeString();
+}, 1000);
+
+// Logout
+document.getElementById('btn-logout')?.addEventListener('click', async () => {
+  try { await fetch('/logout', { method: 'POST' }); } catch {}
+  window.location.href = '/';
+});
+
+// Boot
+await checkAuth();
+await renderProjects();
+await initGovernance();
+
+bus.emit('system:ready', { app: 'javelin', ts: Date.now() });
+addActivity('Javelin Nexus ready', 'green');
+document.body.classList.add('nexus-ready');
+</script>
+
+</body>
+</html>
