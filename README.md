@@ -1,183 +1,221 @@
-# Javelin Project
+# Javelin
 
-Javelin is a modular, containerized application system built with Python, Flask, and PyQt. It integrates various containerized apps for managing data, user authentication, and providing a user-friendly interface via both a web frontend and a PyQt GUI. The project is designed for scalability and ease of use, with a focus on seamless integration between backend services, containers, and frontend interfaces.
+> **OJW Trifecta — Node 2 of 3**
+> Samsung Archlinux · Gateway · Remote access · USB-C key auth · oContainer orchestrator
 
-## Table of Contents
+---
 
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Directory Structure](#directory-structure)
-- [Scripts Overview](#scripts-overview)
-- [Requirements](#requirements)
-- [License](#license)
+## What Is Javelin?
 
-## Project Overview
+Javelin is the **secure gateway** of the OJW distributed system.
+It runs on the **Samsung Archlinux machine** and controls all inbound remote access to the home network.
 
-Javelin combines Flask, Docker, and PyQt to offer a modular platform for managing different applications and services. It provides:
+Javelin does three things:
 
-- A web interface to interact with backend services and modular containers.
-- A PyQt GUI for user authentication and managing app interactions.
-- A modular container system that allows for easily integrating new applications.
-- Persistent data storage for user accounts, logs, and caches.
-- A Dockerized environment for easy deployment and scalability.
+1. **Physical-first authentication** — remote access requires a USB-C drive carrying a machine-specific hash key physically inserted into the user's hardware before any session is granted.
+2. **oContainer orchestration** — manages the lifecycle of modular application containers (DeckBoss, ZSkipper, DataFarm, Captain, Maps, Media, Library, OpenContainer) that can be started, stopped, and monitored from Outpost or remotely.
+3. **Secured remote control** — exposes a Flask API (auth-gated via Flask-Login) that lets authorized remote users interact with the home ecosystem without direct network exposure.
 
-## Features
+Javelin is the **only node in OJW that faces the internet**.  Outpost and Compiler are network-local only.
 
-- User authentication via a PyQt GUI and web interface.
-- Multiple backend services running in Docker containers.
-- Modular containerized applications for different tasks (DeckBoss, ZSkipper, DataFarm, etc.).
-- Persistent data storage with logs, cache, and user accounts.
-- Customizable templates for web rendering (HTML pages for dashboard, media management, maps, etc.).
-- Scalable architecture for adding new services and apps.
+---
 
-## Installation
+## OJW Trifecta
 
-To install Javelin, follow these steps:
+```
+┌────────────────────────────────────────────────────────────────────┐
+│                        OJW DISTRIBUTED SYSTEM                      │
+│                                                                    │
+│  ┌─────────────────┐      ┌──────────────────┐      ┌──────────┐  │
+│  │   OUTPOST       │◄────►│    JAVELIN       │◄────►│COMPILER  │  │
+│  │   Mac mini      │      │  Samsung Arch    │      │  Win PC  │  │
+│  │                 │      │                  │      │          │  │
+│  │ • Webstation    │      │ • Gateway / VPN  │      │ • Builds │  │
+│  │ • Project hub   │      │ • USB-C key auth │      │ • Compile│  │
+│  │ • Data & scrape │      │ • oContainers    │      │ • Assets │  │
+│  │ • Nexus core    │      │ • Remote access  │      │ • CI/CD  │  │
+│  └────────┬────────┘      └────────┬─────────┘      └────┬─────┘  │
+│           │                        │                      │         │
+│           └────────────────────────┴──────────────────────┘         │
+│                      Local network + Javelin gateway                │
+└────────────────────────────────────────────────────────────────────┘
+```
 
-1. Clone the repository:
+| Repo | Machine | Role |
+|------|---------|------|
+| **[outpost](https://github.com/jpuskas3/outpost)** | Mac mini | Home base |
+| **[javelin](https://github.com/jpuskas3/javelin)** | Samsung Archlinux | Gateway ← you are here |
+| **[compiler](https://github.com/jpuskas3/compiler)** | Windows gaming laptop | Build engine |
 
-    ```bash
-    git clone https://github.com/yourusername/javelin.git
-    cd javelin
-    ```
+---
 
-2. Set up the Python virtual environment:
+## USB-C Hash Key Authentication
 
-    ```bash
-    python3 -m venv javenv
-    source javenv/bin/activate
-    ```
+Javelin implements a **physical handshake** security model.  No remote session is established until:
 
-3. Install the dependencies:
+1. The authorized user **physically inserts** their designated USB-C drive into their remote machine.
+2. The drive carries a **machine-bound hash** — a cryptographic key derived from the user's hardware fingerprint and a shared secret stored in Javelin.
+3. Javelin reads the key (via a client-side agent on the remote machine), verifies it against its stored hash table, and only then issues a session token.
+4. The USB-C drive must remain inserted for the duration of the session (or the session is revoked on removal, configurable).
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+### Why physical?
 
-4. Build the Docker containers:
+Software-only authentication can be phished, leaked, or brute-forced.  A physical key that must be present means:
+- Stolen passwords alone are useless
+- Sessions are bounded to physical presence
+- Revocation is instant — pull the drive
 
-    ```bash
-    docker-compose up --build
-    ```
+### Key derivation (planned implementation)
 
-5. Run the app:
+```
+key = HKDF(
+  ikm  = HMAC-SHA256(hardware_fingerprint, shared_secret),
+  salt = machine_id,
+  info = b"javelin-access-v1",
+  length = 32
+)
+```
 
-    ```bash
-    ./1scripts/intro.sh
-    ```
+The derived key is written to the USB-C drive at enrollment time.  The Javelin server stores only the expected hash — never the raw key.
 
-## Usage
+---
 
-Once installed, you can use Javelin to manage different services, access user data, and interact with modular applications through the web interface or PyQt GUI.
+## oContainer System
 
-- Launch the PyQt GUI by running:
+Javelin hosts eight modular application containers in `ocontainer/`:
 
-    ```bash
-    python frontend/gui/app_gui.py
-    ```
+| Container | Purpose |
+|-----------|---------|
+| **DeckBoss** | Command deck — primary user dashboard and control surface |
+| **ZSkipper** | Network skipper — routes and proxies requests across the local net |
+| **DataFarm** | Data ingestion and processing pipeline |
+| **Captain** | Orchestration controller — manages inter-container communication |
+| **Maps** | Spatial data, geolocation overlays, and map rendering |
+| **Media** | Media source management and stream control |
+| **Library** | Asset library — documents, volumes, reference data |
+| **OpenContainer** | Base template for custom application containers |
 
-- Access the web interface via your browser at [http://localhost:80](http://localhost:80).
+Each container exposes a `run.py` entrypoint and is managed via:
+- The Javelin web interface (`/api/nexus/containers/*`)
+- The Nexus SPA (`nexus/nexus.html` → Labs panel)
+- Direct API calls from Outpost
+
+---
 
 ## Directory Structure
 
-The project is organized into the following structure:
-
-/javelin/
+```
+javelin/
 │
-├── 1scripts/              # Setup, startup, and utility scripts
-│   ├── intro.sh           # Introductory script to initialize or explain the app
-│   ├── JAVELIN.sh         # Main script to launch the app and related processes
-│   ├── deskinstall.sh     # Script for uninstalling the app or cleaning up
-│   ├── Desk/              # Desktop-related scripts (e.g., start, delete, edit)
-│   ├── mom.sh             # Script to manage and edit the project
-│   ├── butler.sh          # Utility or helper script
-│   ├── assembly/          # Assembly scripts related to app setup
-├── 2data/                 # Persistent data (user accounts, logs, cache)
-│   ├── logs/              # Log files
-│   ├── cache/             # Cached data
-│   ├── user_accounts/     # User account information
-├── 3docker/               # Docker configuration files
-│   ├── nginx.conf         # Nginx configuration
-│   ├── Dockerfile         # Docker build configuration
-├── 4instance/             # Instance-specific files such as databases (e.g., users.db)
-│   ├── users.db           # Database for managing user data
-├── backend/               # Flask app and backend services
-│   ├── app/               # Main app files
-│   │   ├── app.py         # Flask app entry point
-│   │   ├── models.py      # Database models
-│   │   ├── __init__.py    # App initialization
-├── frontend/              # Web interface and GUI components
-│   ├── static/            # Static files (CSS, images, etc.)
-│   │   ├── javelin.css    # Global styles for the frontend
-│   │   ├── index.html     # HTML file for frontend display
-│   │   ├── templates/     # Template files for rendering in the web interface same files as the directly-stored "templates" folder
-│   ├── gui/               # PyQt GUI components
-│   │   ├── toolbar_gui.py # Toolbar GUI for managing app interactions
-│   │   ├── app_gui.py     # Main login and dashboard GUI
-│   │   ├── static_resources/  # Static resources for the GUI (e.g., icons, CSS)
-│   ├── login_gui.py       # PyQt-based login GUI
-├── ocontainer/            # Modular containerized applications (DeckBoss, ZSkipper, etc.)
-│   ├── DeckBoss/          # Container for DeckBoss app
-│   ├── ZSkipper/          # Container for ZSkipper app
-│   ├── DataFarm/          # Container for DataFarm app
-│   ├── Captain/           # Container for Captain app
-│   ├── Maps/              # Container for Maps app
-│   ├── Media/             # Container for Media app
-│   ├── Library/           # Container for Library app
-│   ├── OpenContainer/     # Base container for other modular apps
-├── shared/                # Logs, cache, and shared data
-│   ├── logs/              # Shared log files
-│   ├── data/              # Shared data files
-│   ├── cache/             # Shared cached data
-├── templates/             # HTML templates for rendering in the web interface
-│   ├── index.html         # Main index page template│   
-│   ├── javelin.css        # Template-specific CSS file
-│   ├── project.html       # Project overview page template
-│   ├── dashboard.html
-│   ├── dash_settings.html # Dashboard settings page template
-│   ├── dash_profile.html  # User profile page template
-│   ├── dash_office.html   # Dashboard office page template
-│   ├── labs.html          # Labs overview page template
-│   ├── lab_build.html     # Lab building page template
-│   ├── lab_outputs.html   # Lab outputs page template
-│   ├── lab_containers.html # Lab containers page template
-│   ├── library.html       # Library page template
-│   ├── lib_actions.html   # Library actions page template
-│   ├── lib_volumes.html   # Library volumes page template
-│   ├── maps.html          # Map page template
-│   ├── map_overlays.html  # Map overlays page template
-│   ├── map_key.html       # Map key page template
-│   ├── media.html         # Media page template
-│   ├── media_sources.html # Media sources page template
-│   ├── media_options.html # Media options page template
-│   ├── networks.html      # Networks page template
-│   ├── settings.html
-├── index.html             # Frontend HTML file for serving GitHub Pages testing
-├── javelin.css            # Global styling for the project
-├── login_gui.py           # Main PyQt login interface for the app
-├── requirements.txt       # Python dependencies file
-├── write_structure.sh     # Script to generate a project structure overview (project_structure.txt)
+├── backend/
+│   └── app/
+│       ├── app.py           # Flask app (Flask-Login, SQLAlchemy, session management)
+│       ├── models.py        # User + SavedPoint models
+│       └── __init__.py
+│
+├── nexus/                   # Nexus async layer (mirrors Outpost nexus/)
+│   ├── core/                # EventBus, LocalStore, APIGateway, GovernanceEngine, Worker
+│   ├── integrations/        # Airtable, AI, GitHub, Portals
+│   ├── backend/api/
+│   │   └── javelin_nexus.py # Flask Blueprint — /api/nexus/* routes
+│   ├── nexus.html           # Javelin-branded Nexus SPA
+│   ├── nexus.css
+│   └── docs/
+│
+├── ocontainer/              # Modular application containers
+│   ├── DeckBoss/
+│   ├── ZSkipper/
+│   ├── DataFarm/
+│   ├── Captain/
+│   ├── Maps/
+│   ├── Media/
+│   ├── Library/
+│   └── OpenContainer/
+│
+├── frontend/
+│   ├── static/
+│   │   ├── javelin.css
+│   │   └── index.html
+│   └── gui/
+│       ├── app_gui.py       # PyQt5 main GUI
+│       └── toolbar_gui.py
+│
+├── 1scripts/                # Startup and management scripts
+│   ├── JAVELIN.sh           # Main launch script
+│   ├── intro.sh
+│   ├── butler.sh
+│   └── mom.sh
+│
+├── 2data/                   # Persistent data (logs, cache, user accounts)
+├── 3docker/                 # Docker / nginx config
+├── 4instance/               # SQLite database (users.db)
+├── shared/                  # Shared logs and cache between containers
+├── templates/               # Jinja2 HTML templates
+│
+├── javelin.css              # Global styles
+├── index.html               # Entry / splash
+├── login_gui.py             # PyQt login interface
+└── requirements.txt
+```
 
-## Scripts Overview
+---
 
-- **intro.sh**: This script is used to introduce and initialize the application, providing basic instructions or configuration.
-- **JAVELIN.sh**: This is the main script responsible for launching the app, including initializing Docker containers and setting up the backend services.
-- **deskinstall.sh**: Use this script to uninstall the app or clean up the environment.
-- **mom.sh**: A utility script to manage and edit the project’s configuration and components.
-- **butler.sh**: A helper script for miscellaneous tasks related to the application.
+## Getting Started (Samsung Archlinux)
 
-## Requirements
+### Prerequisites
 
-- Python 3.x
-- Docker
-- Docker Compose
-- PyQt5
-- Flask
-- A modern browser for the web interface
+```bash
+sudo pacman -S python docker docker-compose python-pip
+pip install -r requirements.txt
+```
+
+### Launch Javelin
+
+```bash
+# Initialize and start all services
+./1scripts/JAVELIN.sh
+
+# Or step by step:
+docker-compose -f 3docker/docker-compose.yml up --build -d
+python backend/app/app.py
+```
+
+### Register the Nexus Blueprint
+
+In `backend/app/app.py`, add:
+
+```python
+from nexus.backend.api.javelin_nexus import nexus_bp
+app.register_blueprint(nexus_bp)
+```
+
+This adds all `/api/nexus/*` routes to the existing Flask app.
+
+### Enroll a USB-C key (future CLI)
+
+```bash
+# On the remote user's machine (client agent):
+javelin-key enroll --server https://javelin.home --user john
+
+# Writes derived key to inserted USB-C drive
+# Registers expected hash in Javelin's key table
+```
+
+---
+
+## Security Model
+
+| Layer | Control |
+|-------|---------|
+| Physical | USB-C key must be inserted at session start |
+| Network | Javelin binds only to `127.0.0.1` locally; external access via reverse proxy with TLS |
+| Auth | Flask-Login session management; bcrypt password hashing |
+| Governance | Nexus GovernanceEngine denies all outbound integration calls by default |
+| Audit | Every gateway call logged; audit trail in IndexedDB + backend JSONL |
+| Revocation | USB-C drive removal triggers session invalidation (configurable) |
+
+---
 
 ## License
 
-Distributed under the MIT License. See LICENSE for more information.
-
+MIT — personal use, collaborative development with invited contributors.
