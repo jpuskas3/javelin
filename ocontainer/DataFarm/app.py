@@ -1,44 +1,91 @@
-from flask import Flask, send_from_directory, request, jsonify
-from flask import Flask, send_from_directory, request, jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, login_user, login_required, current_user, logout_user
-from models import db, User, SavedPoint
+import sys
 import os
-from PIL import Image
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "OpenContainer"))
 
-app = Flask(__name__, static_folder="static")
+import json
+from datetime import datetime, timezone
+from flask import jsonify, request
+from container_base import OContainer
 
-app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+STORAGE_FILE = os.path.join(os.path.dirname(__file__), "records.json")
 
-db.init_app(app)
+SOURCES = [
+    {"id": "hn", "name": "Hacker News", "url": "https://news.ycombinator.com"},
+    {"id": "lobsters", "name": "Lobste.rs", "url": "https://lobste.rs"},
+]
 
-login_manager = LoginManager()
-login_manager.init_app(app)
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+def _load_records():
+    if not os.path.exists(STORAGE_FILE):
+        return []
+    with open(STORAGE_FILE) as f:
+        return json.load(f)
 
-@app.route("/")
-def serve_index():
-    return send_from_directory("static", "index.html")
 
-@app.route("/api/hello")
-def hello():
-    return {"message": "Hello from Flask API!"}
+def _save_records(records):
+    with open(STORAGE_FILE, "w") as f:
+        json.dump(records, f, indent=2)
 
-@app.route('/saved_points', methods=['GET'])
-@login_required
-def saved_points():
-    points = SavedPoint.query.filter_by(user_id=current_user.id).all()
-    return jsonify([
-        {'image': point.image_filename, 'volume': point.volume, 'date': point.date_saved}
-        for point in points
-    ])
+
+class DataFarm(OContainer):
+    manifest = {
+        "name": "DataFarm",
+        "version": "1.0.0",
+        "description": "Data ingestion and processing container",
+        "port": 5001,
+        "capabilities": ["ingest", "storage", "sources"],
+    }
+
+    def on_start(self):
+        if not os.path.exists(STORAGE_FILE):
+            _save_records([])
+
+    def on_stop(self):
+        pass
+
+    def register_routes(self, app):
+
+        @app.route("/sources")
+        def sources():
+            return jsonify({"sources": SOURCES})
+
+        @app.route("/ingest", methods=["POST"])
+        def ingest():
+            body = request.get_json(silent=True) or {}
+            source_id = body.get("source_id")
+            raw = body.get("data")
+
+            if not source_id or raw is None:
+                return jsonify({"ok": False, "message": "source_id and data are required"}), 400
+
+            source = next((s for s in SOURCES if s["id"] == source_id), None)
+            if source is None:
+                return jsonify({"ok": False, "message": f"Unknown source: {source_id}"}), 404
+
+            records = _load_records()
+            record = {
+                "id": len(records) + 1,
+                "source_id": source_id,
+                "source_name": source["name"],
+                "ingested_at": datetime.now(timezone.utc).isoformat(),
+                "data": raw,
+            }
+            records.append(record)
+            _save_records(records)
+
+            return jsonify({"ok": True, "record": record}), 201
+
+        @app.route("/records")
+        def records():
+            source_filter = request.args.get("source_id")
+            all_records = _load_records()
+            if source_filter:
+                all_records = [r for r in all_records if r["source_id"] == source_filter]
+            return jsonify({"count": len(all_records), "records": all_records})
+
+
+container = DataFarm()
+app = container.app
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(host="0.0.0.0", port=5000)
+    container.run(host="127.0.0.1", port=5001)

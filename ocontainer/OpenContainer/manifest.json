@@ -1,0 +1,14 @@
+{
+  "name": "OpenContainer",
+  "version": "1.0.0",
+  "description": "Base template for all OJW containers. Fork this to create a new module.",
+  "port": 5010,
+  "author": "jpuskas3",
+  "capabilities": ["demo", "base"],
+  "routes": [
+    {"method": "GET", "path": "/health"},
+    {"method": "GET", "path": "/status"},
+    {"method": "GET", "path": "/info"},
+    {"method": "GET", "path": "/demo"}
+  ]
+}

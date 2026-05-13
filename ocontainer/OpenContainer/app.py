@@ -1,44 +1,34 @@
-from flask import Flask, send_from_directory, request, jsonify
-from flask import Flask, send_from_directory, request, jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, login_user, login_required, current_user, logout_user
-from models import db, User, SavedPoint
+import sys
 import os
-from PIL import Image
+sys.path.insert(0, os.path.dirname(__file__))
 
-app = Flask(__name__, static_folder="static")
+from flask import jsonify
+from container_base import OContainer
 
-app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
-db.init_app(app)
+class OpenContainer(OContainer):
+    manifest = {
+        "name": "OpenContainer",
+        "version": "1.0.0",
+        "description": "Base template — fork to create a new container",
+        "port": 5010,
+        "capabilities": ["demo", "base"],
+    }
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+    def on_start(self):
+        pass
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+    def on_stop(self):
+        pass
 
-@app.route("/")
-def serve_index():
-    return send_from_directory("static", "index.html")
+    def register_routes(self, app):
+        @app.route("/demo")
+        def demo():
+            return jsonify({"message": "OpenContainer is working"})
 
-@app.route("/api/hello")
-def hello():
-    return {"message": "Hello from Flask API!"}
 
-@app.route('/saved_points', methods=['GET'])
-@login_required
-def saved_points():
-    points = SavedPoint.query.filter_by(user_id=current_user.id).all()
-    return jsonify([
-        {'image': point.image_filename, 'volume': point.volume, 'date': point.date_saved}
-        for point in points
-    ])
+container = OpenContainer()
+app = container.app
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(host="0.0.0.0", port=5000)
+    container.run(host="127.0.0.1", port=5010)

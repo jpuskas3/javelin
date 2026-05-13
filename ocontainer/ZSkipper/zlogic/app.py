@@ -1,44 +1,79 @@
-from flask import Flask, send_from_directory, request, jsonify
-from flask import Flask, send_from_directory, request, jsonify
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import LoginManager, login_user, login_required, current_user, logout_user
-from models import db, User, SavedPoint
+import sys
 import os
-from PIL import Image
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "OpenContainer"))
 
-app = Flask(__name__, static_folder="static")
+import subprocess
+from flask import jsonify, request
+from container_base import OContainer
 
-app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+_route_registry = []
 
-db.init_app(app)
 
-login_manager = LoginManager()
-login_manager.init_app(app)
+class ZSkipper(OContainer):
+    manifest = {
+        "name": "ZSkipper",
+        "version": "1.0.0",
+        "description": "Network routing and proxy container",
+        "port": 5002,
+        "capabilities": ["routing", "proxy", "ping"],
+    }
 
-@login_manager.user_loader
-def load_user(user_id):
-    return User.query.get(int(user_id))
+    def on_start(self):
+        pass
 
-@app.route("/")
-def serve_index():
-    return send_from_directory("static", "index.html")
+    def on_stop(self):
+        _route_registry.clear()
 
-@app.route("/api/hello")
-def hello():
-    return {"message": "Hello from Flask API!"}
+    def register_routes(self, app):
 
-@app.route('/saved_points', methods=['GET'])
-@login_required
-def saved_points():
-    points = SavedPoint.query.filter_by(user_id=current_user.id).all()
-    return jsonify([
-        {'image': point.image_filename, 'volume': point.volume, 'date': point.date_saved}
-        for point in points
-    ])
+        @app.route("/routes")
+        def list_routes():
+            return jsonify({"count": len(_route_registry), "routes": _route_registry})
+
+        @app.route("/routes", methods=["POST"])
+        def add_route():
+            body = request.get_json(silent=True) or {}
+            name = body.get("name")
+            target = body.get("target")
+            method = body.get("method", "GET").upper()
+
+            if not name or not target:
+                return jsonify({"ok": False, "message": "name and target are required"}), 400
+
+            if any(r["name"] == name for r in _route_registry):
+                return jsonify({"ok": False, "message": f"Route '{name}' already registered"}), 409
+
+            entry = {"name": name, "target": target, "method": method}
+            _route_registry.append(entry)
+            return jsonify({"ok": True, "route": entry}), 201
+
+        @app.route("/ping/<host>")
+        def ping(host):
+            # Allow only hostname/IP chars — no shell injection via the route param
+            if not all(c.isalnum() or c in "-." for c in host):
+                return jsonify({"ok": False, "message": "Invalid host"}), 400
+
+            try:
+                result = subprocess.run(
+                    ["ping", "-c", "3", "-W", "2", host],
+                    capture_output=True,
+                    text=True,
+                    timeout=10,
+                )
+                reachable = result.returncode == 0
+                return jsonify({
+                    "host": host,
+                    "reachable": reachable,
+                    "output": result.stdout.strip() or result.stderr.strip(),
+                })
+            except subprocess.TimeoutExpired:
+                return jsonify({"host": host, "reachable": False, "output": "timeout"}), 504
+            except FileNotFoundError:
+                return jsonify({"ok": False, "message": "ping not available on this system"}), 500
+
+
+container = ZSkipper()
+app = container.app
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()
-    app.run(host="0.0.0.0", port=5000)
+    container.run(host="127.0.0.1", port=5002)
